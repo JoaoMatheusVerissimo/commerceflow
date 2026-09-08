@@ -1,0 +1,40 @@
+# IDEs and operating systems
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.jks
+
+# Java
+**/target/
+*.class
+
+# JavaScript / TypeScript
+**/node_modules/
+**/dist/
+**/.vite/
+**/coverage/
+
+# Python
+**/__pycache__/
+**/.pytest_cache/
+**/.venv/
+*.py[cod]
+
+# Infrastructure and local data
+**/.terraform/
+infra/data/
+*.log
+
+# Build and test artifacts
+build/
+reports/
+test-results/
