@@ -1,0 +1,34 @@
+package com.commerceflow.auth.application;
+
+import com.commerceflow.auth.security.JwtService;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClient;
+
+import java.util.Map;
+import java.util.UUID;
+
+@Component
+public class CustomerProfileClient {
+    private final RestClient client;
+    private final JwtService jwtService;
+
+    public CustomerProfileClient(RestClient.Builder builder, JwtService jwtService,
+                                 @Value("${commerceflow.services.customer-url}") String customerUrl) {
+        this.client = builder.baseUrl(customerUrl).build();
+        this.jwtService = jwtService;
+    }
+
+    public void provision(UUID userId, String name, String email) {
+        try {
+            client.put().uri("/internal/customers/{userId}", userId)
+                    .headers(headers -> headers.setBearerAuth(jwtService.issueCustomerProvisioningToken()))
+                    .body(Map.of("name", name, "email", email)).retrieve().toBodilessEntity();
+        } catch (RuntimeException exception) {
+            throw new AuthException("PROFILE_PROVISIONING_UNAVAILABLE",
+                    "Customer profile could not be provisioned; registration can be retried",
+                    HttpStatus.SERVICE_UNAVAILABLE);
+        }
+    }
+}

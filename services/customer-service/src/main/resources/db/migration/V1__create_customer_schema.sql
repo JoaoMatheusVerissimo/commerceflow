@@ -1,0 +1,9 @@
+CREATE TABLE customer_profiles (
+    id UUID PRIMARY KEY,
+    user_id UUID NOT NULL UNIQUE,
+    name VARCHAR(120) NOT NULL,
+    email VARCHAR(320) NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    version BIGINT NOT NULL DEFAULT 0
+);

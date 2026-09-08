@@ -38,3 +38,6 @@ infra/data/
 build/
 reports/
 test-results/
+
+# Project-local toolchains used when host tools are unavailable
+.tools/
