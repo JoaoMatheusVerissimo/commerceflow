@@ -34,7 +34,9 @@ public class JwtService {
         Instant now = clock.instant();
         var claims = JwtClaimsSet.builder().issuer(issuer).issuedAt(now).expiresAt(now.plus(accessTtl))
                 .subject(user.getId().toString()).audience(List.of("commerceflow-api"))
+                .id(java.util.UUID.randomUUID().toString())
                 .claim("email", user.getEmail())
+                .claim("permissions", List.of())
                 .claim("roles", user.getRoles().stream().map(Enum::name).sorted().toList()).build();
         return new IssuedAccessToken(encode(claims), accessTtl.toSeconds());
     }

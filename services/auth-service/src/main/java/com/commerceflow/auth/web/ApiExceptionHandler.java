@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -27,6 +28,12 @@ public class ApiExceptionHandler {
                 .forEach(item -> fields.putIfAbsent(item.getField(), item.getDefaultMessage()));
         return ResponseEntity.badRequest()
                 .body(error("VALIDATION_ERROR", "Request validation failed", request, fields));
+    }
+
+    @ExceptionHandler(ServletRequestBindingException.class)
+    ResponseEntity<ApiError> requestBinding(ServletRequestBindingException exception, HttpServletRequest request) {
+        return ResponseEntity.badRequest()
+                .body(error("INVALID_REQUEST", "A required request value is missing", request, Map.of()));
     }
 
     @ExceptionHandler(Exception.class)

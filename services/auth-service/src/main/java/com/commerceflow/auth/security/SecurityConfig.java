@@ -1,6 +1,5 @@
 package com.commerceflow.auth.security;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -11,8 +10,6 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
-import java.util.Map;
-
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
@@ -22,7 +19,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http, ObjectMapper mapper) throws Exception {
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         var converter = new JwtGrantedAuthoritiesConverter();
         converter.setAuthoritiesClaimName("roles");
         converter.setAuthorityPrefix("ROLE_");
@@ -39,8 +36,8 @@ public class SecurityConfig {
                         .authenticationEntryPoint((request, response, exception) -> {
                             response.setStatus(401);
                             response.setContentType("application/json");
-                            mapper.writeValue(response.getOutputStream(), Map.of("code", "UNAUTHORIZED",
-                                    "message", "Authentication is required"));
+                            response.getWriter().write("{\"code\":\"UNAUTHORIZED\","
+                                    + "\"message\":\"Authentication is required\"}");
                         }));
         return http.build();
     }

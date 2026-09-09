@@ -42,7 +42,7 @@ public class TokenService {
         return create(user, UUID.randomUUID());
     }
 
-    @Transactional
+    @Transactional(noRollbackFor = AuthException.class)
     public AuthTokens rotate(String refreshToken, String csrfToken) {
         var now = clock.instant();
         var current = sessions.findByTokenHash(hash(refreshToken)).orElseThrow(TokenService::invalidToken);

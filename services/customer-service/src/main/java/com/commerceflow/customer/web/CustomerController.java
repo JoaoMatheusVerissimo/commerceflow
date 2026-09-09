@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
@@ -27,11 +26,7 @@ public class CustomerController {
     private final CustomerProfileRepository profiles;
     private final Clock clock;
 
-    public CustomerController(CustomerProfileRepository profiles) {
-        this(profiles, Clock.systemUTC());
-    }
-
-    CustomerController(CustomerProfileRepository profiles, Clock clock) {
+    public CustomerController(CustomerProfileRepository profiles, Clock clock) {
         this.profiles = profiles;
         this.clock = clock;
     }
@@ -41,8 +36,8 @@ public class CustomerController {
     @Transactional
     public void provision(@PathVariable UUID userId, @Valid @RequestBody ProvisionRequest request) {
         var now = clock.instant();
-        var profile = profiles.findByUserId(userId)
-                .orElseGet(() -> new CustomerProfile(userId, request.name().trim(), request.email().toLowerCase(), now));
+        var profile = profiles.findByUserId(userId).orElseGet(() ->
+                new CustomerProfile(userId, request.name().trim(), request.email().toLowerCase(), now));
         profile.update(request.name().trim(), request.email().toLowerCase(), now);
         profiles.save(profile);
     }

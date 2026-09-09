@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createContext, type PropsWithChildren, useContext, useEffect, useMemo, useState } from 'react'
 import { authApi, type Credentials, type Registration } from './api'
 
