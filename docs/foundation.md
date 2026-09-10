@@ -79,4 +79,8 @@ OpenAPI é gerado pelos endpoints reais: `http://localhost:8081/v3/api-docs` e `
 
 ## Pendências de aceite
 
+Verificação em 2026-09-09: Maven `verify` passou (13 testes executados com sucesso; 2 testes PostgreSQL pulados localmente), Checkstyle sem violações. Frontend: 6 testes passaram; ESLint e build passaram. Auditoria npm: 0 vulnerabilidades na consulta realizada. Corrigida limpeza de DOM entre testes React; caches TypeScript movidos para diretório ignorado.
+
+Na [execução GitHub Actions do commit b494875](https://github.com/JoaoMatheusVerissimo/commerceflow/actions/runs/34429464238), job Java e verificação de disponibilidade Docker passaram; frontend falhou em `npm test`, impedindo Compose. Os ajustes finais ainda precisam ser commitados/enviados pelo usuário para validar uma nova execução.
+
 Ambiente desta implementação sem Docker: PostgreSQL/Testcontainers e smoke Compose não foram executados localmente. A Fase 1 só deve ser marcada concluída após CI/Compose verdes. Não avançar à Fase 2. Limitações de produção e integração temporária estão no ADR-010.
