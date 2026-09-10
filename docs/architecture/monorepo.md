@@ -2,6 +2,8 @@
 
 ## Estrutura alvo
 
+Na Fase 1, a implementação usa `apps/frontend` (equivalente ao `apps/web` planejado) e `compose.yml` na raiz. Dockerfiles ficam junto de cada aplicação. A árvore abaixo representa o alvo completo, não serviços já implementados.
+
 ```text
 commerceflow/
 ├── apps/

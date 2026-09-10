@@ -34,7 +34,8 @@ public class SecurityConfig {
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .cors(Customizer.withDefaults())
                 .authorizeExchange(exchange -> exchange
-                        .pathMatchers("/api/v1/auth/register", "/api/v1/auth/login", "/api/v1/auth/refresh")
+                        .pathMatchers("/api/v1/auth/register", "/api/v1/auth/login", "/api/v1/auth/refresh",
+                                "/api/v1/auth/logout")
                         .permitAll()
                         .pathMatchers("/api/v1/auth/.well-known/jwks.json", "/actuator/health/**")
                         .permitAll()
@@ -96,10 +97,10 @@ public class SecurityConfig {
         exchange.getResponse().setStatusCode(status);
         exchange.getResponse().getHeaders().setContentType(MediaType.APPLICATION_JSON);
         String correlationId = exchange.getResponse().getHeaders().getFirst("X-Correlation-Id");
-        String body = "{\"timestamp\":\"" + Instant.now() + "\",\"status\":" + status.value()
-                + ",\"code\":\"" + code + "\",\"message\":\"" + message + "\",\"path\":\""
-                + exchange.getRequest().getPath().value() + "\",\"correlationId\":\""
-                + (correlationId == null ? "unknown" : correlationId) + "\"}";
+        String body = tools.jackson.databind.json.JsonMapper.builder().build().writeValueAsString(java.util.Map.of(
+                "timestamp", Instant.now().toString(), "status", status.value(), "code", code, "message", message,
+                "path", exchange.getRequest().getPath().value(), "correlationId",
+                correlationId == null ? java.util.UUID.randomUUID().toString() : correlationId));
         byte[] bytes = body.getBytes(StandardCharsets.UTF_8);
         return exchange.getResponse().writeWith(Mono.just(exchange.getResponse().bufferFactory().wrap(bytes)));
     }

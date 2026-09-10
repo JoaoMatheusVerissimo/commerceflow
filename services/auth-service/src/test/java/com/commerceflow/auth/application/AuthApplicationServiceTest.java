@@ -39,6 +39,7 @@ class AuthApplicationServiceTest {
         when(users.findByEmail("ana@example.com")).thenReturn(Optional.empty());
         when(passwordEncoder.encode("StrongPassword1")).thenReturn("argon-hash");
         when(users.saveAndFlush(any())).thenAnswer(invocation -> invocation.getArgument(0));
+        when(users.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
         var expected = new TokenService.AuthTokens("access", 900, "refresh", "csrf", 2592000);
         when(tokenService.create(any())).thenReturn(expected);
 

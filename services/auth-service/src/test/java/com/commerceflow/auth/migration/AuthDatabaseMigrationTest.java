@@ -15,7 +15,8 @@ class AuthDatabaseMigrationTest {
 
     @Test
     void appliesAllAuthMigrationsOnPostgres() {
-        var result = Flyway.configure().dataSource(POSTGRES.getJdbcUrl(), POSTGRES.getUsername(), POSTGRES.getPassword())
+        var result = Flyway.configure()
+                .dataSource(POSTGRES.getJdbcUrl(), POSTGRES.getUsername(), POSTGRES.getPassword())
                 .locations("classpath:db/migration").load().migrate();
         assertThat(result.success).isTrue();
         assertThat(result.migrationsExecuted).isPositive();

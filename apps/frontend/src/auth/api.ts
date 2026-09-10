@@ -3,6 +3,15 @@ export type Registration = Credentials & { name: string }
 export type AuthResponse = { accessToken: string; tokenType: string; expiresIn: number }
 
 const API = '/api/v1/auth'
+let refreshInFlight: Promise<AuthResponse> | null = null
+
+export function refreshSession(): Promise<AuthResponse> {
+  if (!refreshInFlight) {
+    refreshInFlight = request('/refresh', { method: 'POST', headers: { 'X-CSRF-Token': csrfToken() } })
+      .finally(() => { refreshInFlight = null })
+  }
+  return refreshInFlight
+}
 
 function csrfToken(): string {
   return document.cookie.split('; ').find((item) => item.startsWith('commerceflow_csrf='))?.split('=')[1] ?? ''
@@ -21,7 +30,10 @@ async function request(path: string, init: RequestInit): Promise<AuthResponse> {
 export const authApi = {
   login: (data: Credentials) => request('/login', { method: 'POST', body: JSON.stringify(data) }),
   register: (data: Registration) => request('/register', { method: 'POST', body: JSON.stringify(data) }),
-  refresh: () => request('/refresh', { method: 'POST', headers: { 'X-CSRF-Token': csrfToken() } }),
-  logout: (accessToken: string) => fetch(`${API}/logout`, { method: 'POST', credentials: 'include',
-    headers: { Authorization: `Bearer ${accessToken}`, 'X-CSRF-Token': csrfToken() } }),
+  refresh: refreshSession,
+  logout: async () => {
+    const response = await fetch(`${API}/logout`, { method: 'POST', credentials: 'include',
+      headers: { 'X-CSRF-Token': csrfToken() } })
+    if (!response.ok) throw new Error('Não foi possível encerrar a sessão. Tente novamente.')
+  },
 }

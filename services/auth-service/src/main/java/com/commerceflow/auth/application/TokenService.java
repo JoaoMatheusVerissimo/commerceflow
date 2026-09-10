@@ -3,6 +3,7 @@ package com.commerceflow.auth.application;
 import com.commerceflow.auth.domain.RefreshSession;
 import com.commerceflow.auth.domain.RefreshSessionRepository;
 import com.commerceflow.auth.domain.UserAccount;
+import com.commerceflow.auth.domain.UserStatus;
 import com.commerceflow.auth.domain.UserAccountRepository;
 import com.commerceflow.auth.security.JwtService;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,6 +47,9 @@ public class TokenService {
     public AuthTokens rotate(String refreshToken, String csrfToken) {
         var now = clock.instant();
         var current = sessions.findByTokenHash(hash(refreshToken)).orElseThrow(TokenService::invalidToken);
+        if (!constantTimeEquals(current.getCsrfHash(), hash(csrfToken))) {
+            throw invalidToken();
+        }
         if (current.isUsedOrRevoked()) {
             sessions.findAllByFamilyId(current.getFamilyId()).forEach(session -> session.revoke(now));
             throw invalidToken();
@@ -55,12 +59,18 @@ public class TokenService {
         }
         current.markUsed(now);
         var user = users.findById(current.getUserId()).orElseThrow(TokenService::invalidToken);
+        if (user.getStatus() != UserStatus.ACTIVE) {
+            throw invalidToken();
+        }
         return create(user, current.getFamilyId());
     }
 
     @Transactional
     public void revoke(String refreshToken, String csrfToken) {
         sessions.findByTokenHash(hash(refreshToken)).ifPresent(session -> {
+            if (!constantTimeEquals(session.getCsrfHash(), hash(csrfToken))) {
+                throw invalidToken();
+            }
             if (constantTimeEquals(session.getCsrfHash(), hash(csrfToken))) {
                 var now = clock.instant();
                 sessions.findAllByFamilyId(session.getFamilyId()).forEach(item -> item.revoke(now));

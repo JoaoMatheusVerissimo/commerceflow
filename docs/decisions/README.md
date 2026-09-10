@@ -16,6 +16,8 @@ ADRs registram decisões com impacto duradouro. Um ADR aceito não é reescrito 
 
 ## Estados
 
+ADR adicional da Foundation: [ADR-010 — integração mínima e limitações](ADR-010-foundation-integration.md).
+
 - **Proposto:** em análise.
 - **Aceito:** baseline para implementação.
 - **Substituído:** preservado, mas apontando para o ADR sucessor.

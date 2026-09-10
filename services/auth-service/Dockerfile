@@ -6,9 +6,9 @@ COPY config config
 COPY services/gateway/pom.xml services/gateway/pom.xml
 COPY services/auth-service/pom.xml services/auth-service/pom.xml
 COPY services/customer-service/pom.xml services/customer-service/pom.xml
-RUN ./mvnw -B -pl services/auth-service -am dependency:go-offline
+RUN sh ./mvnw -B -ntp -pl services/auth-service -am dependency:go-offline
 COPY services/auth-service/src services/auth-service/src
-RUN ./mvnw -B -pl services/auth-service -am package -DskipTests
+RUN sh ./mvnw -B -ntp -pl services/auth-service -am package -DskipTests
 
 FROM eclipse-temurin:21-jre-alpine
 RUN addgroup -S commerceflow && adduser -S commerceflow -G commerceflow

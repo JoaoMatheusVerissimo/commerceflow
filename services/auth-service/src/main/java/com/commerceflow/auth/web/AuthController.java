@@ -70,7 +70,8 @@ public class AuthController {
     @PostMapping("/logout-all")
     public ResponseEntity<Void> logoutAll(@AuthenticationPrincipal Jwt jwt) {
         tokenService.revokeAll(UUID.fromString(jwt.getSubject()));
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.noContent().header(HttpHeaders.SET_COOKIE, clear(REFRESH_COOKIE).toString())
+                .header(HttpHeaders.SET_COOKIE, clear(CSRF_COOKIE).toString()).build();
     }
 
     @GetMapping("/me")
@@ -80,9 +81,9 @@ public class AuthController {
 
     private ResponseEntity<AuthResponse> response(TokenService.AuthTokens tokens) {
         var refresh = ResponseCookie.from(REFRESH_COOKIE, tokens.refreshToken()).httpOnly(true).secure(secureCookies)
-                .sameSite("Strict").path("/api/v1/auth").maxAge(Duration.ofSeconds(tokens.refreshExpiresIn())).build();
+                .sameSite("Lax").path("/api/v1/auth").maxAge(Duration.ofSeconds(tokens.refreshExpiresIn())).build();
         var csrf = ResponseCookie.from(CSRF_COOKIE, tokens.csrfToken()).httpOnly(false).secure(secureCookies)
-                .sameSite("Strict").path("/api/v1/auth").maxAge(Duration.ofSeconds(tokens.refreshExpiresIn())).build();
+                .sameSite("Lax").path("/").maxAge(Duration.ofSeconds(tokens.refreshExpiresIn())).build();
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, refresh.toString())
                 .header(HttpHeaders.SET_COOKIE, csrf.toString())
                 .body(new AuthResponse(tokens.accessToken(), "Bearer", tokens.accessExpiresIn()));
@@ -98,7 +99,8 @@ public class AuthController {
 
     private ResponseCookie clear(String name) {
         return ResponseCookie.from(name, "").httpOnly(name.equals(REFRESH_COOKIE)).secure(secureCookies)
-                .sameSite("Strict").path("/api/v1/auth").maxAge(Duration.ZERO).build();
+                .sameSite("Lax").path(name.equals(REFRESH_COOKIE) ? "/api/v1/auth" : "/")
+                .maxAge(Duration.ZERO).build();
     }
 
     public record RegisterRequest(
@@ -107,7 +109,8 @@ public class AuthController {
             @NotBlank @Size(min = 12, max = 128)
             @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).+$",
                     message = "must contain uppercase, lowercase and a number") String password) { }
-    public record LoginRequest(@NotBlank @Email String email, @NotBlank String password) { }
+    public record LoginRequest(@NotBlank @Email @Size(max = 320) String email,
+                               @NotBlank @Size(max = 128) String password) { }
     public record AuthResponse(String accessToken, String tokenType, long expiresIn) { }
     public record UserView(UUID id, String email, String status, java.util.Set<String> roles) {
         static UserView from(UserAccount user) {

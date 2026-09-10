@@ -2,9 +2,14 @@
 
 CommerceFlow é um projeto de portfólio que evoluirá para uma plataforma de comércio digital orientada a eventos, reunindo e-commerce, CRM, Customer 360 e analytics.
 
-> Status atual: **Fase 0 — Arquitetura concluída em documentação.** Não há funcionalidades de aplicação implementadas ainda.
+> Status atual: **Fase 1 — Foundation implementada, com aceite Docker/CI pendente.** Cadastro, login e perfil autenticado disponíveis; ainda não há catálogo ou compras.
 
 ## O que existe agora
+
+- React/TypeScript com cadastro, login e página de conta;
+- gateway e serviços Auth/Customer em Java 21, bancos PostgreSQL separados e Flyway;
+- JWT RS256, Argon2, refresh rotativo, CSRF, roles e erros padronizados;
+- Dockerfiles, Compose, testes automatizados e workflow de CI inicial;
 
 - visão geral e diagramas da arquitetura;
 - limites e responsabilidades dos serviços;
@@ -17,6 +22,8 @@ CommerceFlow é um projeto de portfólio que evoluirá para uma plataforma de co
 
 ## Documentação
 
+- [Executar e testar a Foundation](docs/foundation.md)
+
 - [Briefing completo](docs/PROJECT-BRIEF.md)
 - [Índice da arquitetura](docs/architecture/README.md)
 - [Catálogo das APIs](docs/api/api-catalog.md)
@@ -24,9 +31,15 @@ CommerceFlow é um projeto de portfólio que evoluirá para uma plataforma de co
 - [Architecture Decision Records](docs/decisions/README.md)
 - [Roadmap técnico](docs/roadmap.md)
 
-## Próximo passo
+## Executar localmente
 
-A Fase 1 criará a fundação executável: monorepo, infraestrutura local mínima, gateway, autenticação, frontend e CI inicial. Ela só começa após aprovação explícita da Fase 0.
+Configure uma senha local em `.env` a partir de `.env.example` e execute `docker compose up -d --build`. Abra `http://localhost:3000`. Requer Docker Engine/Desktop com Compose v2 e containers Linux. Consulte [o guia completo](docs/foundation.md) para testes, variáveis, OpenAPI e execução Java/Vite.
+
+## Validação e limitações
+
+Build/lint Java e frontend e testes locais executados. Testcontainers PostgreSQL e smoke Compose precisam passar em ambiente com Docker; não foram validados neste computador. O workflow está criado, mas sua execução remota ainda não foi verificada. Não há deploy público. Esta é uma base demonstrativa, não uma configuração pronta para produção. Veja [ADR-010](docs/decisions/ADR-010-foundation-integration.md).
+
+A próxima ação é validar Compose/CI para fechar o aceite da Fase 1. A Fase 2 não foi iniciada e exige nova aprovação explícita.
 
 ## Princípios
 

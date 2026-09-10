@@ -1,5 +1,5 @@
 # Services
 
-Este diretório receberá os serviços executáveis do CommerceFlow. Seus limites, dados e integrações estão definidos em [docs/architecture/services.md](../docs/architecture/services.md).
+Serviços executáveis da Fase 1: `gateway`, `auth-service` e `customer-service`. Seus limites, dados e integrações estão definidos em [docs/architecture/services.md](../docs/architecture/services.md).
 
-Não existe código de serviço nesta fase. Cada diretório será criado junto com uma implementação funcional e seus testes, evitando scaffolds vazios ou capacidades fictícias.
+Build/testes pelo Maven agregador na raiz. Consulte [Foundation](../docs/foundation.md). Demais serviços só serão criados nas fases correspondentes.

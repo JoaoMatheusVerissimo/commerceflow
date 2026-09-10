@@ -1,5 +1,8 @@
 package com.commerceflow.auth.security;
 
+import com.commerceflow.auth.web.ApiErrors;
+import org.springframework.security.config.http.SessionCreationPolicy;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -26,19 +29,23 @@ public class SecurityConfig {
         var authenticationConverter = new JwtAuthenticationConverter();
         authenticationConverter.setJwtGrantedAuthoritiesConverter(converter);
         http.csrf(csrf -> csrf.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(errors -> errors
+                        .authenticationEntryPoint((req, res, ex) ->
+                                ApiErrors.write(req, res, 401, "UNAUTHORIZED", "Authentication is required"))
+                        .accessDeniedHandler((req, res, ex) ->
+                                ApiErrors.write(req, res, 403, "FORBIDDEN", "Access denied")))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/register", "/auth/login", "/auth/refresh",
+                        .requestMatchers("/auth/register", "/auth/login", "/auth/refresh", "/auth/logout",
                                 "/auth/.well-known/jwks.json", "/actuator/health", "/v3/api-docs/**",
                                 "/swagger-ui/**").permitAll()
                         .requestMatchers("/auth/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth -> oauth.jwt(jwt -> jwt.jwtAuthenticationConverter(authenticationConverter))
-                        .authenticationEntryPoint((request, response, exception) -> {
-                            response.setStatus(401);
-                            response.setContentType("application/json");
-                            response.getWriter().write("{\"code\":\"UNAUTHORIZED\","
-                                    + "\"message\":\"Authentication is required\"}");
-                        }));
+                        .authenticationEntryPoint((req, res, ex) ->
+                                ApiErrors.write(req, res, 401, "UNAUTHORIZED", "Authentication is required"))
+                        .accessDeniedHandler((req, res, ex) ->
+                                ApiErrors.write(req, res, 403, "FORBIDDEN", "Access denied")));
         return http.build();
     }
 }

@@ -14,6 +14,8 @@ Uma fase só termina quando a funcionalidade executa localmente, possui validaç
 
 ## Fase 1 — Foundation
 
+**Status:** implementação autorizada e em validação. Testes/build locais disponíveis; aceite do Compose e CI ainda pendente. Veja [execução e limitações](foundation.md). Fase 2 não iniciada.
+
 **Fatia demonstrável:** cadastro, login e acesso autenticado a uma página protegida.
 
 - workspace do frontend e builds Java;

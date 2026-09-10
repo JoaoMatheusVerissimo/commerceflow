@@ -1,5 +1,7 @@
 # Catálogo inicial de APIs
 
+> Este catálogo descreve a arquitetura planejada. Endpoints implementados na Fase 1 estão em [Foundation](../foundation.md#apis-reais) e no OpenAPI gerado. Os demais pertencem às fases futuras.
+
 ## Convenções HTTP
 
 - prefixo externo `/api/v1` e versionamento independente nas especificações internas;

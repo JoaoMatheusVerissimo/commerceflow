@@ -20,11 +20,13 @@ import static org.mockito.Mockito.when;
 
 class TokenServiceTest {
     @Test
-    void revokesTheTokenFamilyWhenARefreshTokenIsReused() {
+    void revokesTheTokenFamilyWhenARefreshTokenIsReused() throws Exception {
         var repository = mock(RefreshSessionRepository.class);
         var now = Instant.parse("2026-09-09T00:00:00Z");
         var family = UUID.randomUUID();
-        var reused = new RefreshSession(UUID.randomUUID(), family, "ignored", "csrf", now, now.plusSeconds(60));
+        String csrfHash = java.util.HexFormat.of().formatHex(java.security.MessageDigest.getInstance("SHA-256")
+                .digest("csrf-token".getBytes(java.nio.charset.StandardCharsets.UTF_8)));
+        var reused = new RefreshSession(UUID.randomUUID(), family, "ignored", csrfHash, now, now.plusSeconds(60));
         var sibling = new RefreshSession(UUID.randomUUID(), family, "sibling", "csrf", now, now.plusSeconds(60));
         reused.markUsed(now);
         when(repository.findByTokenHash(org.mockito.ArgumentMatchers.anyString())).thenReturn(Optional.of(reused));

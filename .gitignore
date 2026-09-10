@@ -21,6 +21,9 @@ Thumbs.db
 **/node_modules/
 **/dist/
 **/.vite/
+*.tsbuildinfo
+apps/frontend/vite.config.js
+apps/frontend/vite.config.d.ts
 **/coverage/
 
 # Python

@@ -23,7 +23,22 @@ import java.util.Set;
 @Configuration
 public class JwtConfiguration {
     @Bean
-    RSAKey rsaKey() throws Exception {
+    RSAKey rsaKey(@Value("${commerceflow.security.private-key-file:}") String privateKeyFile) throws Exception {
+        if (!privateKeyFile.isBlank()) {
+            String pem = java.nio.file.Files.readString(java.nio.file.Path.of(privateKeyFile))
+                    .replace("-----BEGIN PRIVATE KEY-----", "").replace("-----END PRIVATE KEY-----", "")
+                    .replaceAll("\\s", "");
+            var factory = java.security.KeyFactory.getInstance("RSA");
+            var spec = new java.security.spec.PKCS8EncodedKeySpec(java.util.Base64.getDecoder().decode(pem));
+            var privateKey = (java.security.interfaces.RSAPrivateCrtKey) factory.generatePrivate(spec);
+            if (privateKey.getModulus().bitLength() < 2048) {
+                throw new IllegalArgumentException("JWT key must contain a private RSA key of at least 2048 bits");
+            }
+            var publicKey = (RSAPublicKey) factory.generatePublic(new java.security.spec.RSAPublicKeySpec(
+                    privateKey.getModulus(), privateKey.getPublicExponent()));
+            var key = new RSAKey.Builder(publicKey).privateKey(privateKey).build();
+            return new RSAKey.Builder(key).keyID(key.computeThumbprint().toString()).build();
+        }
         KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
         generator.initialize(2048);
         var pair = generator.generateKeyPair();

@@ -6,7 +6,7 @@ spring:
   datasource:
     url: ${DB_URL:jdbc:postgresql://localhost:5434/customer_db}
     username: ${DB_USERNAME:commerceflow}
-    password: ${DB_PASSWORD:commerceflow_dev}
+    password: ${DB_PASSWORD:}
   jpa:
     hibernate:
       ddl-auto: validate

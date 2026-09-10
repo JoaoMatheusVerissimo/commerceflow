@@ -29,6 +29,29 @@ class CustomerControllerTest {
     @MockitoBean private JwtDecoder jwtDecoder;
 
     @Test
+    void customerCannotProvisionProfiles() throws Exception {
+        mvc.perform(put("/internal/customers/{userId}", UUID.randomUUID())
+                        .with(jwt().authorities(new org.springframework.security.core.authority
+                                .SimpleGrantedAuthority("ROLE_CUSTOMER")))
+                        .contentType("application/json")
+                        .content("{\"name\":\"Ana Silva\",\"email\":\"ana@example.com\"}"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void profileLookupUsesAuthenticatedOwner() throws Exception {
+        UUID owner = UUID.randomUUID();
+        when(profiles.findByUserId(owner)).thenReturn(Optional.of(new com.commerceflow.customer.domain
+                .CustomerProfile(owner, "Ana Silva", "ana@example.com", java.time.Instant.now())));
+        mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get("/customers/me")
+                        .with(jwt().jwt(token -> token.subject(owner.toString()))
+                                .authorities(new org.springframework.security.core.authority
+                                        .SimpleGrantedAuthority("ROLE_CUSTOMER"))))
+                .andExpect(status().isOk());
+        verify(profiles).findByUserId(owner);
+    }
+
+    @Test
     void serviceScopeCanProvisionAnIdempotentProfile() throws Exception {
         UUID userId = UUID.randomUUID();
         when(profiles.findByUserId(userId)).thenReturn(Optional.empty());

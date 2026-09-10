@@ -6,7 +6,7 @@ spring:
   datasource:
     url: ${DB_URL:jdbc:postgresql://localhost:5433/auth_db}
     username: ${DB_USERNAME:commerceflow}
-    password: ${DB_PASSWORD:commerceflow_dev}
+    password: ${DB_PASSWORD:}
   jpa:
     hibernate:
       ddl-auto: validate
@@ -25,6 +25,7 @@ management:
 commerceflow:
   security:
     issuer: ${JWT_ISSUER:http://localhost:8080/api/v1/auth}
+    private-key-file: ${JWT_PRIVATE_KEY_FILE:}
     access-token-ttl: PT15M
     refresh-token-ttl: P30D
     secure-cookies: ${SECURE_COOKIES:false}

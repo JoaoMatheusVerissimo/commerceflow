@@ -15,19 +15,41 @@ const AuthContext = createContext<AuthState | null>(null)
 export function AuthProvider({ children }: PropsWithChildren) {
   const [accessToken, setAccessToken] = useState<string | null>(null)
   const [ready, setReady] = useState(false)
+  const [expiresIn, setExpiresIn] = useState(900)
 
   useEffect(() => {
-    authApi.refresh().then((result) => setAccessToken(result.accessToken)).catch(() => setAccessToken(null))
-      .finally(() => setReady(true))
+    let active = true
+    authApi.refresh().then((result) => {
+      if (active) { setAccessToken(result.accessToken); setExpiresIn(result.expiresIn) }
+    }).catch(() => { if (active) setAccessToken(null) })
+      .finally(() => { if (active) setReady(true) })
+    return () => { active = false }
   }, [])
+
+  useEffect(() => {
+    if (!accessToken) return
+    let active = true
+    const timer = setTimeout(() => {
+      authApi.refresh().then((result) => {
+        if (active) { setAccessToken(result.accessToken); setExpiresIn(result.expiresIn) }
+      }).catch(() => { if (active) setAccessToken(null) })
+    }, Math.max(1, expiresIn - 60) * 1000)
+    return () => { active = false; clearTimeout(timer) }
+  }, [accessToken, expiresIn])
 
   const value = useMemo<AuthState>(() => ({
     accessToken,
     ready,
-    login: async (data) => setAccessToken((await authApi.login(data)).accessToken),
-    register: async (data) => setAccessToken((await authApi.register(data)).accessToken),
+    login: async (data) => {
+      const result = await authApi.login(data)
+      setAccessToken(result.accessToken); setExpiresIn(result.expiresIn)
+    },
+    register: async (data) => {
+      const result = await authApi.register(data)
+      setAccessToken(result.accessToken); setExpiresIn(result.expiresIn)
+    },
     logout: async () => {
-      if (accessToken) await authApi.logout(accessToken)
+      await authApi.logout()
       setAccessToken(null)
     },
   }), [accessToken, ready])

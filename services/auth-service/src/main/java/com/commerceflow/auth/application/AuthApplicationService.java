@@ -19,6 +19,7 @@ public class AuthApplicationService {
     private final CustomerProfileClient customerClient;
     private final TokenService tokenService;
     private final Clock clock;
+    private final String dummyPasswordHash;
 
     public AuthApplicationService(UserAccountRepository users, PasswordEncoder passwordEncoder,
                                   CustomerProfileClient customerClient, TokenService tokenService, Clock clock) {
@@ -27,6 +28,7 @@ public class AuthApplicationService {
         this.customerClient = customerClient;
         this.tokenService = tokenService;
         this.clock = clock;
+        this.dummyPasswordHash = passwordEncoder.encode(UUID.randomUUID().toString());
     }
 
     public TokenService.AuthTokens register(String name, String email, String password) {
@@ -38,34 +40,36 @@ public class AuthApplicationService {
             boolean cannotResume = user.getStatus() != UserStatus.PENDING_PROFILE
                     || !passwordEncoder.matches(password, user.getPasswordHash());
             if (cannotResume) {
-                throw new AuthException("EMAIL_ALREADY_REGISTERED", "Email is already registered", HttpStatus.CONFLICT);
+                throw registrationRejected();
             }
         } else {
             user = UserAccount.pending(normalized, passwordEncoder.encode(password), name.trim(), clock.instant());
             try {
-                users.saveAndFlush(user);
+                user = users.saveAndFlush(user);
             } catch (DataIntegrityViolationException exception) {
-                throw new AuthException("EMAIL_ALREADY_REGISTERED", "Email is already registered", HttpStatus.CONFLICT);
+                throw registrationRejected();
             }
         }
         customerClient.provision(user.getId(), user.getPendingProfileName(), user.getEmail());
         user.activate();
-        users.save(user);
+        user = users.save(user);
         return tokenService.create(user);
     }
 
     public TokenService.AuthTokens login(String email, String password) {
-        var user = users.findByEmail(email.trim().toLowerCase(Locale.ROOT))
-                .orElseThrow(AuthApplicationService::invalidCredentials);
-        if (!passwordEncoder.matches(password, user.getPasswordHash()) || user.getStatus() == UserStatus.DISABLED) {
+        var found = users.findByEmail(email.trim().toLowerCase(Locale.ROOT));
+        String hash = found.map(UserAccount::getPasswordHash).orElse(dummyPasswordHash);
+        boolean valid = passwordEncoder.matches(password, hash);
+        if (found.isEmpty() || !valid || found.get().getStatus() == UserStatus.DISABLED) {
             throw invalidCredentials();
         }
+        var user = found.get();
         if (user.getStatus() == UserStatus.PENDING_PROFILE) {
             customerClient.provision(user.getId(), user.getPendingProfileName(), user.getEmail());
             user.activate();
         }
         user.recordLogin(clock.instant());
-        users.save(user);
+        user = users.save(user);
         return tokenService.create(user);
     }
 
@@ -75,5 +79,10 @@ public class AuthApplicationService {
 
     private static AuthException invalidCredentials() {
         return new AuthException("INVALID_CREDENTIALS", "Email or password is invalid", HttpStatus.UNAUTHORIZED);
+    }
+
+    private static AuthException registrationRejected() {
+        return new AuthException("REGISTRATION_NOT_COMPLETED", "Registration could not be completed",
+                HttpStatus.CONFLICT);
     }
 }

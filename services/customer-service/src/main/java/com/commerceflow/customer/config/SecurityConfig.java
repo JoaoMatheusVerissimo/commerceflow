@@ -1,5 +1,8 @@
 package com.commerceflow.customer.config;
 
+import com.commerceflow.customer.web.ApiErrors;
+import org.springframework.security.config.http.SessionCreationPolicy;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,11 +47,22 @@ public class SecurityConfig {
             return result;
         });
         http.csrf(csrf -> csrf.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(errors -> errors
+                        .authenticationEntryPoint((req, res, ex) ->
+                                ApiErrors.write(req, res, 401, "UNAUTHORIZED", "Authentication is required"))
+                        .accessDeniedHandler((req, res, ex) ->
+                                ApiErrors.write(req, res, 403, "FORBIDDEN", "Access denied")))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/actuator/health", "/v3/api-docs/**", "/swagger-ui/**").permitAll()
                         .requestMatchers("/internal/**").hasAuthority("SCOPE_customer:provision")
+                        .requestMatchers("/customers/me").hasRole("CUSTOMER")
                         .anyRequest().authenticated())
-                .oauth2ResourceServer(oauth -> oauth.jwt(jwt -> jwt.jwtAuthenticationConverter(converter)));
+                .oauth2ResourceServer(oauth -> oauth.jwt(jwt -> jwt.jwtAuthenticationConverter(converter))
+                        .authenticationEntryPoint((req, res, ex) ->
+                                ApiErrors.write(req, res, 401, "UNAUTHORIZED", "Authentication is required"))
+                        .accessDeniedHandler((req, res, ex) ->
+                                ApiErrors.write(req, res, 403, "FORBIDDEN", "Access denied")));
         return http.build();
     }
 }

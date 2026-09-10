@@ -29,6 +29,7 @@ class AuthControllerValidationTest {
                         .content("{\"name\":\"Ana\",\"email\":\"ana@example.com\",\"password\":\"weak\"}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"))
-                .andExpect(jsonPath("$.fields.password").exists());
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.fieldErrors[0].field").value("password"));
     }
 }

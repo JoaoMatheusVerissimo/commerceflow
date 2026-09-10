@@ -19,9 +19,11 @@ O documento `docs/PROJECT-BRIEF.md` é a fonte de verdade do produto e da arquit
 
 ## Fase atual
 
-Fase 0 — Arquitetura. Entregáveis exigidos antes de implementação funcional:
+Fase 1 — Foundation, autorizada explicitamente pelo usuário após a Fase 0.
 
-Status: documentação concluída em 2026-09-08 e aguardando revisão/aprovação explícita do usuário.
+Status: implementação em validação; aceite Docker/CI pendente. Não avançar à Fase 2 sem nova aprovação.
+
+Entregáveis arquiteturais da Fase 0 preservados:
 
 1. Arquitetura geral
 2. Diagrama
@@ -38,4 +40,4 @@ Status: documentação concluída em 2026-09-08 e aguardando revisão/aprovaçã
 13. ADRs iniciais
 14. Roadmap técnico
 
-Após concluir esses itens, aguarde a aprovação do usuário antes da Fase 1.
+Consulte `docs/foundation.md` para execução e limitações e ADR-010 para a integração HTTP temporária.
