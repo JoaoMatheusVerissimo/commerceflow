@@ -27,4 +27,8 @@ O rate limit é local ao gateway, por IP remoto e endpoint; no Compose, nginx co
 
 Login usa erro genérico e hashing também para identidade inexistente. Cadastro síncrono ainda diferencia sucesso de rejeição (409): resistência completa à enumeração requer verificação de e-mail/resposta assíncrona, ainda ausente. Não alegamos que a Foundation esteja pronta para produção.
 
-Testes H2 verificam fluxo JPA/transações, mas não substituem PostgreSQL. Testcontainers verifica migrations e a CI executa smoke HTTP sobre o Compose real. A Definition of Done permanece pendente até essa execução passar.
+Testes H2 verificam fluxo JPA/transações, mas não substituem PostgreSQL. Testcontainers verifica migrations e a CI executa smoke HTTP sobre o Compose real. O aceite foi inicialmente condicionado ao sucesso dessa execução.
+
+## Registro de validação da Foundation
+
+A [execução Foundation #2](https://github.com/JoaoMatheusVerissimo/commerceflow/actions/runs/34430111496), commit `48e5237`, passou nos jobs Java, frontend e Compose, encerrando a pendência de aceite da Fase 1. A execução Docker ocorreu na CI; as limitações operacionais acima continuam válidas. A Fase 2 depende de nova autorização explícita.

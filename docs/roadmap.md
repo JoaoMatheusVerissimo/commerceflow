@@ -14,7 +14,7 @@ Uma fase só termina quando a funcionalidade executa localmente, possui validaç
 
 ## Fase 1 — Foundation
 
-**Status:** implementação autorizada e em validação. Testes/build locais disponíveis; aceite do Compose e CI ainda pendente. Veja [execução e limitações](foundation.md). Fase 2 não iniciada.
+**Status:** concluída. Aceite registrado após sucesso dos jobs Java, frontend e Compose na [execução Foundation #2](https://github.com/JoaoMatheusVerissimo/commerceflow/actions/runs/34430111496), commit `48e5237`. Veja [evidências e limitações](foundation.md#aceite-da-fase-1). Fase 2 não iniciada; exige nova aprovação explícita.
 
 **Fatia demonstrável:** cadastro, login e acesso autenticado a uma página protegida.
 

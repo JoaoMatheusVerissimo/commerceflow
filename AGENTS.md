@@ -21,7 +21,7 @@ O documento `docs/PROJECT-BRIEF.md` é a fonte de verdade do produto e da arquit
 
 Fase 1 — Foundation, autorizada explicitamente pelo usuário após a Fase 0.
 
-Status: implementação em validação; aceite Docker/CI pendente. Não avançar à Fase 2 sem nova aprovação.
+Status: Fase 1 concluída, com aceite registrado após sucesso dos jobs Java, frontend e Compose na execução Foundation #2 (commit `48e5237`). Não avançar à Fase 2 sem nova aprovação.
 
 Entregáveis arquiteturais da Fase 0 preservados:
 

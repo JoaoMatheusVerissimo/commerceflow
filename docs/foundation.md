@@ -77,10 +77,16 @@ Erros: 400 validação; 401 autenticação/refresh inválido; 403 autorização;
 
 OpenAPI é gerado pelos endpoints reais: `http://localhost:8081/v3/api-docs` e `http://localhost:8082/v3/api-docs` no modo de desenvolvimento Java; UI em `/swagger-ui/index.html`. No Compose, essas portas não são publicadas: acesse pela rede interna ou por override local. Não confundir o catálogo arquitetural planejado com endpoints disponíveis hoje.
 
-## Pendências de aceite
+## Aceite da Fase 1
 
 Verificação em 2026-09-09: Maven `verify` passou (13 testes executados com sucesso; 2 testes PostgreSQL pulados localmente), Checkstyle sem violações. Frontend: 6 testes passaram; ESLint e build passaram. Auditoria npm: 0 vulnerabilidades na consulta realizada. Corrigida limpeza de DOM entre testes React; caches TypeScript movidos para diretório ignorado.
 
-Na [execução GitHub Actions do commit b494875](https://github.com/JoaoMatheusVerissimo/commerceflow/actions/runs/34429464238), job Java e verificação de disponibilidade Docker passaram; frontend falhou em `npm test`, impedindo Compose. Os ajustes finais ainda precisam ser commitados/enviados pelo usuário para validar uma nova execução.
+Histórico: na [execução GitHub Actions do commit b494875](https://github.com/JoaoMatheusVerissimo/commerceflow/actions/runs/34429464238), job Java e verificação de disponibilidade Docker passaram; frontend falhou em `npm test`, impedindo Compose. A limpeza do DOM entre testes foi corrigida e enviada ao repositório.
 
-Ambiente desta implementação sem Docker: PostgreSQL/Testcontainers e smoke Compose não foram executados localmente. A Fase 1 só deve ser marcada concluída após CI/Compose verdes. Não avançar à Fase 2. Limitações de produção e integração temporária estão no ADR-010.
+**Resultado final: Fase 1 concluída.** A [execução Foundation #2](https://github.com/JoaoMatheusVerissimo/commerceflow/actions/runs/34430111496), commit `48e5237` na `master`, terminou com status `Success`, conforme evidência apresentada pelo usuário. Os três jobs foram aprovados:
+
+- `java`: verificação Docker, lint, testes e build;
+- `frontend`: lint, 6 testes em 3 arquivos, build e auditoria;
+- `compose`: construção e inicialização dos containers e smoke integrado de cadastro, perfil, login, rotação/reutilização de refresh e logout.
+
+A validação Docker foi realizada na CI, não neste computador, onde Docker estava indisponível. O aceite não representa deploy público nem certificação de prontidão para produção. As limitações de produção e a integração temporária do ADR-010 permanecem documentadas. Não avançar à Fase 2 sem nova aprovação explícita do usuário.

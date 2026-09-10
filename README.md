@@ -2,7 +2,7 @@
 
 CommerceFlow é um projeto de portfólio que evoluirá para uma plataforma de comércio digital orientada a eventos, reunindo e-commerce, CRM, Customer 360 e analytics.
 
-> Status atual: **Fase 1 — Foundation implementada, com aceite Docker/CI pendente.** Cadastro, login e perfil autenticado disponíveis; ainda não há catálogo ou compras.
+> Status atual: **Fase 1 — Foundation concluída, com CI e integração Docker aprovadas.** Cadastro, login e perfil autenticado disponíveis; ainda não há catálogo ou compras.
 
 ## O que existe agora
 
@@ -37,9 +37,9 @@ Configure uma senha local em `.env` a partir de `.env.example` e execute `docker
 
 ## Validação e limitações
 
-Build/lint Java e frontend e testes locais executados. Na [CI do commit b494875](https://github.com/JoaoMatheusVerissimo/commerceflow/actions/runs/34429464238), Java passou, frontend falhou nos testes e Compose foi pulado. A correção de isolamento dos testes React passou localmente; falta enviá-la e validar novamente a CI e o smoke Compose. Docker não está disponível neste computador. Não há deploy público. Esta é uma base demonstrativa, não uma configuração pronta para produção. Veja [ADR-010](docs/decisions/ADR-010-foundation-integration.md).
+Build/lint Java e frontend e testes locais executados. A [execução Foundation #2, commit 48e5237](https://github.com/JoaoMatheusVerissimo/commerceflow/actions/runs/34430111496) terminou com sucesso nos três jobs: Java, frontend e Compose. A integração Docker foi validada na CI; não foi executada neste computador, onde Docker estava indisponível. Não há deploy público. Esta é uma base demonstrativa, não uma configuração pronta para produção. Veja [ADR-010](docs/decisions/ADR-010-foundation-integration.md).
 
-A próxima ação é validar Compose/CI para fechar o aceite da Fase 1. A Fase 2 não foi iniciada e exige nova aprovação explícita.
+O aceite da Fase 1 está registrado em [Foundation](docs/foundation.md#aceite-da-fase-1). A Fase 2 não foi iniciada e exige nova aprovação explícita.
 
 ## Princípios
 
