@@ -34,6 +34,10 @@ public class SecurityConfig {
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .cors(Customizer.withDefaults())
                 .authorizeExchange(exchange -> exchange
+                        .pathMatchers(org.springframework.http.HttpMethod.GET,
+                                "/api/v1/products", "/api/v1/products/**",
+                                "/api/v1/categories", "/api/v1/categories/**")
+                        .permitAll()
                         .pathMatchers("/api/v1/auth/register", "/api/v1/auth/login", "/api/v1/auth/refresh",
                                 "/api/v1/auth/logout")
                         .permitAll()

@@ -78,7 +78,8 @@ public class CatalogService {
             if (max != null) { predicates.add(cb.le(root.get("minPrice"), max)); }
             return cb.and(predicates.toArray(jakarta.persistence.criteria.Predicate[]::new));
         };
-        return page(products.findAll(specification, paging(page, size, order.and(Sort.by("id")))).map(ProductView::from));
+        var result = products.findAll(specification, paging(page, size, order.and(Sort.by("id"))));
+        return page(result.map(ProductView::from));
     }
 
     public ProductView detail(String slug) {
@@ -161,7 +162,8 @@ public class CatalogService {
     private static void validateImageUrl(String value) {
         if (value.matches("/catalog-images/[a-z0-9-]+\\.svg")) { return; }
         URI uri;
-        try { uri = URI.create(value); } catch (IllegalArgumentException exception) { throw invalid("Invalid image URL"); }
+        try { uri = URI.create(value); }
+        catch (IllegalArgumentException exception) { throw invalid("Invalid image URL"); }
         if (!"https".equals(uri.getScheme()) || uri.getHost() == null || uri.getUserInfo() != null) {
             throw invalid("Image URL must use HTTPS or a bundled catalog image");
         }
@@ -182,7 +184,9 @@ public class CatalogService {
             throw new CatalogException(409, "VERSION_CONFLICT", "Resource changed; reload before editing");
         }
     }
-    private static CatalogException invalid(String message) { return new CatalogException(400, "INVALID_REQUEST", message); }
+    private static CatalogException invalid(String message) {
+        return new CatalogException(400, "INVALID_REQUEST", message);
+    }
     private static CatalogException notFound() {
         return new CatalogException(404, "CATALOG_NOT_FOUND", "Catalog resource not found");
     }

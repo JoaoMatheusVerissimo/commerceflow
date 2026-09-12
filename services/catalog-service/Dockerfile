@@ -5,6 +5,7 @@ COPY mvnw pom.xml ./
 COPY config config
 COPY services/gateway/pom.xml services/gateway/pom.xml
 COPY services/auth-service/pom.xml services/auth-service/pom.xml
+COPY services/customer-service/pom.xml services/customer-service/pom.xml
 COPY services/catalog-service/pom.xml services/catalog-service/pom.xml
 RUN sh ./mvnw -B -ntp -pl services/catalog-service -am dependency:go-offline
 COPY services/catalog-service/src services/catalog-service/src

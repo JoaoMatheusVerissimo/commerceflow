@@ -1,5 +1,8 @@
 server:
   port: ${SERVER_PORT:8083}
+commerceflow:
+  catalog:
+    demo-seed: ${CATALOG_DEMO_SEED:false}
 spring:
   application:
     name: catalog-service

@@ -52,6 +52,7 @@ services:
     environment:
       AUTH_SERVICE_URL: http://auth-service:8081
       CUSTOMER_SERVICE_URL: http://customer-service:8082
+      CATALOG_SERVICE_URL: http://catalog-service:8083
       JWK_SET_URI: http://auth-service:8081/auth/.well-known/jwks.json
       JWT_ISSUER: http://localhost:8080/api/v1/auth
     depends_on:
@@ -62,6 +63,30 @@ services:
     ports: ["127.0.0.1:3000:80"]
     depends_on:
       gateway: { condition: service_started }
+  catalog-db:
+    image: postgres:17.6-alpine
+    environment:
+      POSTGRES_DB: catalog_db
+      POSTGRES_USER: commerceflow
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
+    ports: ["127.0.0.1:5435:5432"]
+    volumes: ["catalog-data:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U commerceflow -d catalog_db"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+  catalog-service:
+    build: { context: ., dockerfile: services/catalog-service/Dockerfile }
+    environment:
+      DB_URL: jdbc:postgresql://catalog-db:5432/catalog_db
+      DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
+      JWK_SET_URI: http://auth-service:8081/auth/.well-known/jwks.json
+      JWT_ISSUER: http://localhost:8080/api/v1/auth
+      CATALOG_DEMO_SEED: "true"
+    depends_on:
+      catalog-db: { condition: service_healthy }
 volumes:
   auth-data:
   customer-data:
+  catalog-data:
