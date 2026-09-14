@@ -13,10 +13,10 @@ ADRs registram decisões com impacto duradouro. Um ADR aceito não é reescrito 
 | [ADR-007](ADR-007-authentication.md) | Aceito | JWT assimétrico curto e refresh token rotativo |
 | [ADR-008](ADR-008-contract-versioning.md) | Aceito | Contratos HTTP/evento explícitos e versionados |
 | [ADR-009](ADR-009-observability.md) | Aceito | OpenTelemetry e correlação de ponta a ponta |
+| [ADR-010](ADR-010-foundation-integration.md) | Aceito | Integração mínima e limitações da Foundation |
+| [ADR-011](ADR-011-catalog-foundation.md) | Aceito | Catálogo navegável, gestão mínima e avaliações moderadas |
 
 ## Estados
-
-ADR adicional da Foundation: [ADR-010 — integração mínima e limitações](ADR-010-foundation-integration.md).
 
 - **Proposto:** em análise.
 - **Aceito:** baseline para implementação.

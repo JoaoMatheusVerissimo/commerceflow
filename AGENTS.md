@@ -19,9 +19,9 @@ O documento `docs/PROJECT-BRIEF.md` é a fonte de verdade do produto e da arquit
 
 ## Fase atual
 
-Fase 1 — Foundation, autorizada explicitamente pelo usuário após a Fase 0.
+Fase 2 — Catalog, autorizada explicitamente pelo usuário após a Foundation.
 
-Status: Fase 1 concluída, com aceite registrado após sucesso dos jobs Java, frontend e Compose na execução Foundation #2 (commit `48e5237`). Não avançar à Fase 2 sem nova aprovação.
+Status: Fase 2 implementada e validada pelos jobs Java, frontend e Compose na execução `34667831031` (commit `528de2a`), incluindo os smokes Foundation e Catalog. Fase 1 preservada, com aceite original na execução Foundation #2 (commit `48e5237`). Não avançar à Fase 3 sem nova aprovação explícita.
 
 Entregáveis arquiteturais da Fase 0 preservados:
 
@@ -40,4 +40,4 @@ Entregáveis arquiteturais da Fase 0 preservados:
 13. ADRs iniciais
 14. Roadmap técnico
 
-Consulte `docs/foundation.md` para execução e limitações e ADR-010 para a integração HTTP temporária.
+Consulte `docs/catalog.md` para execução, APIs e evidências atuais, ADR-011 para decisões do catálogo e `docs/foundation.md`/ADR-010 para a base e integração HTTP temporária.

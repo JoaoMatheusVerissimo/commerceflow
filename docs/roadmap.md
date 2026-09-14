@@ -14,7 +14,7 @@ Uma fase só termina quando a funcionalidade executa localmente, possui validaç
 
 ## Fase 1 — Foundation
 
-**Status:** concluída. Aceite registrado após sucesso dos jobs Java, frontend e Compose na [execução Foundation #2](https://github.com/JoaoMatheusVerissimo/commerceflow/actions/runs/34430111496), commit `48e5237`. Veja [evidências e limitações](foundation.md#aceite-da-fase-1). Fase 2 não iniciada; exige nova aprovação explícita.
+**Status:** concluída. Aceite registrado após sucesso dos jobs Java, frontend e Compose na [execução Foundation #2](https://github.com/JoaoMatheusVerissimo/commerceflow/actions/runs/34430111496), commit `48e5237`. Veja [evidências e limitações](foundation.md#aceite-da-fase-1).
 
 **Fatia demonstrável:** cadastro, login e acesso autenticado a uma página protegida.
 
@@ -27,6 +27,8 @@ Uma fase só termina quando a funcionalidade executa localmente, possui validaç
 
 ## Fase 2 — Catalog
 
+**Status:** implementada e validada, após autorização explícita do usuário. [CI do commit 528de2a](https://github.com/JoaoMatheusVerissimo/commerceflow/actions/runs/34667831031) aprovada nos jobs Java, frontend e Compose, incluindo regressão Foundation e smoke Catalog. Consulte [execução, APIs e limites](catalog.md) e [ADR-011](decisions/ADR-011-catalog-foundation.md).
+
 **Fatia demonstrável:** navegar, buscar, filtrar e abrir um produto real do seed.
 
 - Catalog Service, categorias, variantes, imagens e avaliações iniciais;
@@ -35,6 +37,8 @@ Uma fase só termina quando a funcionalidade executa localmente, possui validaç
 - testes de preço, slug/SKU, busca e permissões.
 
 ## Fase 3 — Cart
+
+**Status:** não iniciada; depende de nova autorização explícita.
 
 **Fatia demonstrável:** adicionar/remover itens, favoritar, aplicar cupom e revisar checkout.
 

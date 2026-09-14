@@ -2,14 +2,15 @@
 
 CommerceFlow é um projeto de portfólio que evoluirá para uma plataforma de comércio digital orientada a eventos, reunindo e-commerce, CRM, Customer 360 e analytics.
 
-> Status atual: **Fase 1 — Foundation concluída, com CI e integração Docker aprovadas.** Cadastro, login e perfil autenticado disponíveis; ainda não há catálogo ou compras.
+> Status atual: **Fase 2 — Catalog implementada, com CI e integração Docker aprovadas.** Catálogo navegável, gestão mínima e avaliações moderadas disponíveis, além de cadastro/login/perfil. Ainda não há carrinho ou compras.
 
 ## O que existe agora
 
-- React/TypeScript com cadastro, login e página de conta;
-- gateway e serviços Auth/Customer em Java 21, bancos PostgreSQL separados e Flyway;
+- React/TypeScript com loja, busca/filtros, paginação, detalhes e seleção de variantes, cadastro/login e conta;
+- gestão de produtos/categorias por MANAGER/ADMIN e moderação de avaliações;
+- gateway e serviços Auth/Customer/Catalog em Java 21, bancos PostgreSQL separados e Flyway;
 - JWT RS256, Argon2, refresh rotativo, CSRF, roles e erros padronizados;
-- Dockerfiles, Compose, testes automatizados e workflow de CI inicial;
+- seed fictício com seis produtos e imagens locais, Dockerfiles, Compose, testes e CI;
 
 - visão geral e diagramas da arquitetura;
 - limites e responsabilidades dos serviços;
@@ -23,6 +24,7 @@ CommerceFlow é um projeto de portfólio que evoluirá para uma plataforma de co
 ## Documentação
 
 - [Executar e testar a Foundation](docs/foundation.md)
+- [Executar, administrar e testar o catálogo](docs/catalog.md)
 
 - [Briefing completo](docs/PROJECT-BRIEF.md)
 - [Índice da arquitetura](docs/architecture/README.md)
@@ -33,13 +35,13 @@ CommerceFlow é um projeto de portfólio que evoluirá para uma plataforma de co
 
 ## Executar localmente
 
-Configure uma senha local em `.env` a partir de `.env.example` e execute `docker compose up -d --build`. Abra `http://localhost:3000`. Requer Docker Engine/Desktop com Compose v2 e containers Linux. Consulte [o guia completo](docs/foundation.md) para testes, variáveis, OpenAPI e execução Java/Vite.
+Configure uma senha local em `.env` a partir de `.env.example` e execute `docker compose up -d --build`. Abra `http://localhost:3000`. Requer Docker Engine/Desktop com Compose v2 e containers Linux. Consulte [o guia do catálogo](docs/catalog.md) para testes, acesso administrativo local, variáveis, OpenAPI e execução Java/Vite.
 
 ## Validação e limitações
 
-Build/lint Java e frontend e testes locais executados. A [execução Foundation #2, commit 48e5237](https://github.com/JoaoMatheusVerissimo/commerceflow/actions/runs/34430111496) terminou com sucesso nos três jobs: Java, frontend e Compose. A integração Docker foi validada na CI; não foi executada neste computador, onde Docker estava indisponível. Não há deploy público. Esta é uma base demonstrativa, não uma configuração pronta para produção. Veja [ADR-010](docs/decisions/ADR-010-foundation-integration.md).
+Build/lint Java e frontend e testes locais passaram. A [CI do commit 528de2a](https://github.com/JoaoMatheusVerissimo/commerceflow/actions/runs/34667831031) passou nos jobs Java, frontend e Compose, incluindo os smokes Foundation e Catalog. Docker foi validado na CI, não neste computador, onde estava indisponível. Não há deploy público nem configuração pronta para produção. Veja [resultados e limitações](docs/catalog.md#testes-e-resultados) e [ADR-011](docs/decisions/ADR-011-catalog-foundation.md).
 
-O aceite da Fase 1 está registrado em [Foundation](docs/foundation.md#aceite-da-fase-1). A Fase 2 não foi iniciada e exige nova aprovação explícita.
+O aceite histórico da Fase 1 está em [Foundation](docs/foundation.md#aceite-da-fase-1). A Fase 2 está documentada em [Catalog](docs/catalog.md). A Fase 3 não foi iniciada e exige nova aprovação explícita.
 
 ## Princípios
 

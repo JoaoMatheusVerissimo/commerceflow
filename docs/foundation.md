@@ -1,5 +1,7 @@
 # Fase 1 — execução e verificação
 
+> Registro do escopo e aceite da Fase 1. A stack atual inclui também o catálogo da Fase 2: consulte [Catalog](catalog.md) para execução complementar, novas portas/APIs e resultados atualizados. As contagens de testes abaixo são históricas da Foundation.
+
 ## Escopo implementado
 
 Monorepo Maven (Java 21) e React/TypeScript; gateway reativo, Auth, perfil mínimo Customer, bancos independentes, Flyway, cadastro/login, Argon2, RS256/JWKS, refresh rotativo, logout, RBAC, CSRF, CORS e correlation ID. Página de conta consome o perfil real e trata carregamento/erro/sucesso. Não há catálogo, compras ou painel administrativo.
@@ -89,4 +91,4 @@ Histórico: na [execução GitHub Actions do commit b494875](https://github.com/
 - `frontend`: lint, 6 testes em 3 arquivos, build e auditoria;
 - `compose`: construção e inicialização dos containers e smoke integrado de cadastro, perfil, login, rotação/reutilização de refresh e logout.
 
-A validação Docker foi realizada na CI, não neste computador, onde Docker estava indisponível. O aceite não representa deploy público nem certificação de prontidão para produção. As limitações de produção e a integração temporária do ADR-010 permanecem documentadas. Não avançar à Fase 2 sem nova aprovação explícita do usuário.
+A validação Docker foi realizada na CI, não neste computador, onde Docker estava indisponível. O aceite não representa deploy público nem certificação de prontidão para produção. As limitações de produção e a integração temporária do ADR-010 permanecem documentadas. Posteriormente, o usuário autorizou a Fase 2, registrada em [Catalog](catalog.md); a Fase 3 ainda depende de nova autorização.

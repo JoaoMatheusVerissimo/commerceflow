@@ -1,6 +1,6 @@
 # Catálogo inicial de APIs
 
-> Este catálogo descreve a arquitetura planejada. Endpoints implementados na Fase 1 estão em [Foundation](../foundation.md#apis-reais) e no OpenAPI gerado. Os demais pertencem às fases futuras.
+> Este catálogo descreve a arquitetura planejada. Os contratos implementados estão em [Foundation](../foundation.md#apis-reais), [Catalog — Fase 2](../catalog.md#apis-implementadas) e no OpenAPI gerado. Os demais pertencem às fases futuras.
 
 ## Convenções HTTP
 
@@ -44,6 +44,8 @@ Nas tabelas abaixo, `SELLER+` inclui SELLER, MANAGER e ADMIN; `MANAGER+` inclui 
 | `POST /customers/me/anonymization` | CUSTOMER | solicitar workflow de anonimização |
 
 ## Catalog Service
+
+Na Fase 2, produtos/categorias usam PUT para atualização completa com versão, não PATCH; moderação usa PATCH em `/admin/reviews/{id}`. Consulte a [tabela de APIs implementadas](../catalog.md#apis-implementadas) para os métodos exatos. Visualizações, cotação e cupons abaixo continuam planejados.
 
 | Método e rota | Acesso | Finalidade |
 |---|---|---|
