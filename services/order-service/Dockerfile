@@ -8,13 +8,13 @@ COPY services/auth-service/pom.xml services/auth-service/pom.xml
 COPY services/customer-service/pom.xml services/customer-service/pom.xml
 COPY services/catalog-service/pom.xml services/catalog-service/pom.xml
 COPY services/order-service/pom.xml services/order-service/pom.xml
-RUN sh ./mvnw -B -ntp -pl services/gateway -am dependency:go-offline
-COPY services/gateway/src services/gateway/src
-RUN sh ./mvnw -B -ntp -pl services/gateway -am package -DskipTests
+RUN sh ./mvnw -B -ntp -pl services/order-service -am dependency:go-offline
+COPY services/order-service/src services/order-service/src
+RUN sh ./mvnw -B -ntp -pl services/order-service -am package -DskipTests
 
 FROM eclipse-temurin:21-jre-alpine
 RUN addgroup -S commerceflow && adduser -S commerceflow -G commerceflow
 USER commerceflow
-COPY --from=build /workspace/services/gateway/target/gateway-*.jar /app.jar
-EXPOSE 8080
+COPY --from=build /workspace/services/order-service/target/order-service-*.jar /app.jar
+EXPOSE 8084
 ENTRYPOINT ["java", "-jar", "/app.jar"]

@@ -5,6 +5,7 @@ import { catalogRequest, money, type Page, type Product, type Review } from './a
 import { useRemote } from './useRemote'
 import { StoreLayout } from './StoreLayout'
 import { RemoteState } from './RemoteState'
+import { ProductActions } from '../cart/ProductActions'
 
 export function ProductPage() {
   const { slug } = useParams()
@@ -22,7 +23,8 @@ export function ProductDetail({ product }: { product: Product }) {
       <div className="product-info"><p className="eyebrow">{product.category.name}</p><h1>{product.name}</h1><p className="muted">SKU {variant.sku}</p>
         <div className="detail-price">{variant.promotionalPrice && <del>{money(variant.price)}</del>}<strong>{money(variant.effectivePrice)}</strong></div>
         <p>{product.description}</p><fieldset><legend>Escolha a variação</legend><div className="variant-options">{product.variants.map(v => <button key={v.sku} aria-pressed={sku === v.sku} onClick={() => setSku(v.sku)}>{v.color} · {v.size}</button>)}</div></fieldset>
-        <p className="notice">Catálogo demonstrativo. Compra e disponibilidade de estoque ainda não estão habilitadas.</p><p className="muted">Imagens ilustrativas da coleção demo.</p>
+        <ProductActions productId={product.id} sku={sku} />
+        <p className="notice">Carrinho e revisão disponíveis. Pedidos, pagamentos e estoque ainda não estão habilitados.</p><p className="muted">Imagens ilustrativas da coleção demo.</p>
       </div></section><Reviews productId={product.id} /></>
 }
 

@@ -6,9 +6,16 @@ import { RegisterPage } from './pages/RegisterPage'
 import { CatalogPage } from './catalog/CatalogPage'
 import { ProductPage } from './catalog/ProductPage'
 import { AdminCatalog } from './catalog/AdminCatalog'
+import { CartPage } from './cart/CartPage'
+import { FavoritesPage } from './cart/FavoritesPage'
+import { CouponsPage } from './cart/CouponsPage'
 
 export function App() {
   return <Routes>
+    <Route path="/admin/coupons" element={<ProtectedRoute><CouponsPage /></ProtectedRoute>} />
+    <Route path="/cart" element={<ProtectedRoute><CartPage key="cart" /></ProtectedRoute>} />
+    <Route path="/checkout" element={<ProtectedRoute><CartPage key="checkout" checkout /></ProtectedRoute>} />
+    <Route path="/favorites" element={<ProtectedRoute><FavoritesPage /></ProtectedRoute>} />
     <Route path="/" element={<CatalogPage home />} />
     <Route path="/products" element={<CatalogPage />} />
     <Route path="/products/:slug" element={<ProductPage />} />

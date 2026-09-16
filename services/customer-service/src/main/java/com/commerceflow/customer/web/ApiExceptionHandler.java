@@ -13,8 +13,8 @@ public class ApiExceptionHandler {
     @ExceptionHandler(ResponseStatusException.class)
     ResponseEntity<ApiErrors.Body> status(ResponseStatusException exception, HttpServletRequest request) {
         int status = exception.getStatusCode().value();
-        return ResponseEntity.status(status).body(ApiErrors.body(status, "CUSTOMER_NOT_FOUND",
-                "Customer profile not found", request, List.of()));
+        return ResponseEntity.status(status).body(ApiErrors.body(status, "CUSTOMER_REQUEST_FAILED",
+                exception.getReason(), request, List.of()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

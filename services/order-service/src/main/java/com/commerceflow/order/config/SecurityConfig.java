@@ -1,10 +1,9 @@
-package com.commerceflow.catalog.config;
+package com.commerceflow.order.config;
 
-import com.commerceflow.catalog.web.ApiErrors;
+import com.commerceflow.order.web.ApiErrors;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
@@ -40,11 +39,7 @@ public class SecurityConfig {
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/actuator/health/**", "/v3/api-docs/**", "/swagger-ui/**").permitAll()
-                        .requestMatchers("/admin/**").hasAnyRole("MANAGER", "ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/internal/pricing/quote").hasRole("CUSTOMER")
-                        .requestMatchers(HttpMethod.GET, "/products", "/products/**", "/categories", "/categories/**")
-                        .permitAll()
-                        .requestMatchers(HttpMethod.POST, "/products/*/reviews").hasRole("CUSTOMER")
+                        .requestMatchers("/cart", "/cart/**").hasRole("CUSTOMER")
                         .anyRequest().denyAll())
                 .exceptionHandling(e -> e
                         .authenticationEntryPoint((req, res, ex) ->

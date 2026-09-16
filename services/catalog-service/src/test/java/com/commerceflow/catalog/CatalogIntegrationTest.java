@@ -43,6 +43,62 @@ class CatalogIntegrationTest {
     @Autowired MockMvc mvc;
     @Autowired jakarta.persistence.EntityManagerFactory entityManagerFactory;
     @MockitoBean JwtDecoder decoder;
+    @Autowired com.commerceflow.catalog.application.PricingService pricing;
+
+    @Test
+    void authoritativePricingUsesPromotionCouponAndRejectsUnavailableSku() throws Exception {
+        var product = JSON.readTree(mvc.perform(get("/products/bota-serra"))
+                .andReturn().getResponse().getContentAsString());
+        String payload = "{\"coupon\":\"DEMO10\",\"items\":[{\"productId\":\""
+                + product.get("id").asString() + "\",\"sku\":\"BOTA-SERRA-P\",\"quantity\":2}]}";
+        mvc.perform(post("/internal/pricing/quote")).andExpect(status().isUnauthorized());
+        mvc.perform(post("/internal/pricing/quote").with(jwt()
+                        .authorities(new SimpleGrantedAuthority("ROLE_CUSTOMER")))
+                .contentType("application/json").content(payload)).andExpect(status().isOk())
+                .andExpect(jsonPath("$.subtotal").value("799.80"))
+                .andExpect(jsonPath("$.discount").value("79.98"))
+                .andExpect(jsonPath("$.total").value("719.82"));
+        for (String invalid : List.of(payload.replace("DEMO10", "UNKNOWN"),
+                payload.replace("BOTA-SERRA-P", "MISSING"))) {
+            mvc.perform(post("/internal/pricing/quote").with(jwt()
+                            .authorities(new SimpleGrantedAuthority("ROLE_CUSTOMER")))
+                    .contentType("application/json").content(invalid)).andExpect(status().isUnprocessableEntity());
+        }
+    }
+
+    @Test
+    void couponRulesCheckDatesMinimumRoundingCapAndVersion() throws Exception {
+        var product = create("pricing-" + UUID.randomUUID(), "ACTIVE");
+        var id = UUID.fromString(product.get("id").asString());
+        var item = new com.commerceflow.catalog.application.PricingService.Item(id,
+                product.get("variants").get(0).get("sku").asString(), 1);
+        var now = java.time.Instant.now();
+        String code = "T-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        var fixed = pricing.save(new com.commerceflow.catalog.application.PricingService.Coupon(code,
+                "FIXED", new BigDecimal("200"), BigDecimal.ZERO, now.minusSeconds(60),
+                now.plusSeconds(3600), true, null), UUID.fromString(ACTOR));
+        var request = new com.commerceflow.catalog.application.PricingService.Request(List.of(item), code);
+        assertThat(pricing.quote(request).total()).isEqualTo("0.00");
+        var percent = new com.commerceflow.catalog.application.PricingService.Coupon(code, "PERCENT",
+                new BigDecimal("12.34"), BigDecimal.ZERO, now.minusSeconds(60), now.plusSeconds(3600),
+                true, fixed.version());
+        pricing.save(percent, UUID.fromString(ACTOR));
+        assertThat(pricing.quote(request).discount()).isEqualTo("12.33");
+        assertThatThrownBy(() -> pricing.save(percent, UUID.fromString(ACTOR)))
+                .isInstanceOf(com.commerceflow.catalog.application.CatalogException.class);
+        var current = pricing.coupons(code).getFirst();
+        pricing.save(new com.commerceflow.catalog.application.PricingService.Coupon(code, "FIXED",
+                BigDecimal.ONE, new BigDecimal("1000"), now.minusSeconds(60), now.plusSeconds(3600),
+                true, current.version()), UUID.fromString(ACTOR));
+        assertThatThrownBy(() -> pricing.quote(request))
+                .isInstanceOf(com.commerceflow.catalog.application.CatalogException.class);
+        current = pricing.coupons(code).getFirst();
+        pricing.save(new com.commerceflow.catalog.application.PricingService.Coupon(code, "FIXED",
+                BigDecimal.ONE, BigDecimal.ZERO, now.minusSeconds(600), now.minusSeconds(60),
+                true, current.version()), UUID.fromString(ACTOR));
+        assertThatThrownBy(() -> pricing.quote(request))
+                .isInstanceOf(com.commerceflow.catalog.application.CatalogException.class);
+    }
 
     @Test
     void catalogQueryCountIsBoundedWithoutOneQueryPerProduct() throws Exception {

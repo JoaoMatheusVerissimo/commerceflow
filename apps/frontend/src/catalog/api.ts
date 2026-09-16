@@ -19,6 +19,8 @@ export async function catalogRequest<T>(path: string, token?: string | null, ini
       400: 'Confira os campos e filtros informados.', 401: 'Sua sessão expirou. Entre novamente.',
       403: 'Você não tem permissão para esta operação.', 404: 'Não encontramos este produto ou categoria.',
       409: 'Este dado já existe ou foi alterado. Recarregue antes de tentar novamente.',
+      422: 'Revise o carrinho: produto/variação indisponível ou cupom inválido, expirado ou abaixo do valor mínimo.',
+      503: 'Serviço temporariamente indisponível. Tente novamente.',
     }
     throw new ApiError(response.status, messages[response.status] ?? body.message ?? 'Não foi possível concluir a operação.')
   }

@@ -8,9 +8,10 @@ export function StoreLayout({ children }: PropsWithChildren) {
     <div className="store-note">Coleção demonstrativa · Produtos ilustrados · Sem vendas nesta etapa</div>
     <header className="store-header"><Link className="store-brand" to="/">CommerceFlow<span>ESSENCIAIS DO CAMPO</span></Link>
       <nav aria-label="Navegação principal"><Link to="/products">Coleção</Link><Link to="/categories/botas">Botas</Link><Link to="/categories/chapeus">Chapéus</Link>
+        <Link to="/favorites">Favoritos</Link><Link to="/cart">Carrinho</Link>
         <Link to={accessToken ? '/account' : '/login'}>{accessToken ? 'Minha conta' : 'Entrar'}</Link></nav>
     </header>
     <main className="store-main">{children}</main>
-    <footer className="store-footer"><strong>CommerceFlow</strong><p>Um catálogo para explorar. A experiência de compra será disponibilizada em uma próxima etapa.</p><Link to="/admin/products">Gestão do catálogo</Link></footer>
+    <footer className="store-footer"><strong>CommerceFlow</strong><p>Explore, favorite e revise seu carrinho. Sem pedidos ou cobranças nesta etapa.</p><Link to="/admin/products">Gestão do catálogo</Link> · <Link to="/admin/coupons">Gestão de cupons</Link></footer>
   </div>
 }

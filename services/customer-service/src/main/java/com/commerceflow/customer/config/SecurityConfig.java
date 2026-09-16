@@ -56,7 +56,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/actuator/health", "/v3/api-docs/**", "/swagger-ui/**").permitAll()
                         .requestMatchers("/internal/**").hasAuthority("SCOPE_customer:provision")
-                        .requestMatchers("/customers/me").hasRole("CUSTOMER")
+                        .requestMatchers("/customers/me", "/customers/me/**").hasRole("CUSTOMER")
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth -> oauth.jwt(jwt -> jwt.jwtAuthenticationConverter(converter))
                         .authenticationEntryPoint((req, res, ex) ->
