@@ -23,7 +23,36 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class CartIntegrationTest {
     @Autowired MockMvc mvc;
+    @Autowired CartService carts;
     @MockitoBean JwtDecoder decoder;
+    @Test
+    void concurrentWritersCannotOverwriteEachOther() throws Exception {
+        var owner = UUID.randomUUID();
+        var item = new CartService.Item(UUID.randomUUID(), "SKU", 1);
+        carts.replace(owner, UUID.randomUUID(), new CartService.Change(0L, java.util.List.of(item), null));
+        var ready = new java.util.concurrent.CountDownLatch(2);
+        var start = new java.util.concurrent.CountDownLatch(1);
+        try (var executor = java.util.concurrent.Executors.newFixedThreadPool(2)) {
+            java.util.concurrent.Callable<Integer> update = () -> {
+                ready.countDown();
+                if (!start.await(10, java.util.concurrent.TimeUnit.SECONDS)) { throw new AssertionError("Timeout"); }
+                try {
+                    carts.replace(owner, UUID.randomUUID(), new CartService.Change(1L, java.util.List.of(
+                            new CartService.Item(item.productId(), "SKU", 2)), null));
+                    return 200;
+                } catch (org.springframework.web.server.ResponseStatusException ex) {
+                    return ex.getStatusCode().value();
+                }
+            };
+            var first = executor.submit(update);
+            var second = executor.submit(update);
+            org.assertj.core.api.Assertions.assertThat(ready.await(10, java.util.concurrent.TimeUnit.SECONDS)).isTrue();
+            start.countDown();
+            org.assertj.core.api.Assertions.assertThat(java.util.List.of(first.get(), second.get()))
+                    .containsExactlyInAnyOrder(200, 409);
+            org.assertj.core.api.Assertions.assertThat(carts.get(owner).version()).isEqualTo(2);
+        }
+    }
     @Test
     void persistsItemsAndCouponAndReplaysWithoutDuplicating() throws Exception {
         var user = UUID.randomUUID();
@@ -63,6 +92,10 @@ class CartIntegrationTest {
         for (int quantity : new int[]{0, -1, 100}) {
             mvc.perform(customer(put("/cart"), owner).header("Idempotency-Key", UUID.randomUUID())
                     .contentType("application/json").content(body(0, quantity))).andExpect(status().isBadRequest());
+        }
+        for (String invalid : java.util.List.of("{\"items\":[]}", "{\"version\":0,\"items\":[null]}")) {
+            mvc.perform(customer(put("/cart"), owner).header("Idempotency-Key", UUID.randomUUID())
+                    .contentType("application/json").content(invalid)).andExpect(status().isBadRequest());
         }
         mvc.perform(customer(post("/cart/quote"), owner)).andExpect(status().isUnprocessableEntity());
         mvc.perform(get("/v3/api-docs")).andExpect(status().isOk())

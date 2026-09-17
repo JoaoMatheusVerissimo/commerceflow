@@ -2,7 +2,7 @@ import { catalogRequest } from '../catalog/api'
 
 export type CartItem = { productId: string; sku: string; quantity: number }
 export type Cart = { version: number; items: CartItem[]; coupon: string | null }
-export type Quote = { items: (CartItem & { name: string; slug: string; unitPrice: string; total: string })[]; subtotal: string; discount: string; total: string; currency: string; quotedAt: string; expiresAt: string }
+export type Quote = { cartVersion: number; items: (CartItem & { name: string; slug: string; unitPrice: string; total: string })[]; subtotal: string; discount: string; total: string; currency: string; quotedAt: string; expiresAt: string }
 export type Command = { key: string; cart: Cart }
 export const command = (cart: Cart): Command => ({ key: crypto.randomUUID(), cart })
 export const saveCart = (token: string, pending: Command) => catalogRequest<Cart>('/cart', token, {

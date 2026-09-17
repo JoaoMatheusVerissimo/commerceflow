@@ -28,7 +28,10 @@ function CartEditor({ initial, token, reload, checkout }: { initial: Cart; token
     if (!cart.items.length) return
     const controller = new AbortController()
     catalogRequest<Quote>('/cart/quote', token, { method: 'POST', signal: controller.signal })
-      .then(data => { if (!controller.signal.aborted) setQuote(data) })
+      .then(data => {
+        if (data.cartVersion !== cart.version) throw new Error('O carrinho mudou em outra aba. Recarregue a página para revisar os itens atuais.')
+        if (!controller.signal.aborted) setQuote(data)
+      })
       .catch((reason: Error) => { if (!controller.signal.aborted) setQuoteError(reason) })
     return () => controller.abort()
   }, [cart, token, attempt])

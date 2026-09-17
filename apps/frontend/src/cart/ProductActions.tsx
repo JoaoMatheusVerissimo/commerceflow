@@ -6,11 +6,15 @@ import { addItem, saveCart, type Command } from './api'
 
 export function ProductActions({ productId, sku }: { productId: string; sku: string }) {
   const { accessToken } = useAuth()
+  if (!accessToken) return <p><Link to="/login">Entre na sua conta</Link> para adicionar ao carrinho ou aos favoritos.</p>
+  return <AuthenticatedActions key={accessToken} productId={productId} sku={sku} accessToken={accessToken} />
+}
+
+function AuthenticatedActions({ productId, sku, accessToken }: { productId: string; sku: string; accessToken: string }) {
   const [busy, setBusy] = useState(false)
   const [pending, setPending] = useState<Command>()
   const [feedback, setFeedback] = useState('')
   const [error, setError] = useState('')
-  if (!accessToken) return <p><Link to="/login">Entre na sua conta</Link> para adicionar ao carrinho ou aos favoritos.</p>
   async function add() {
     setBusy(true); setError(''); setFeedback('')
     try {

@@ -30,7 +30,7 @@ public class CartService {
     public record Item(@NotNull UUID productId,
             @NotBlank @Size(max = 64) @Pattern(regexp = "[A-Z0-9]+(?:-[A-Z0-9]+)*") String sku,
             @Min(1) @Max(99) int quantity) { }
-    public record Change(@Min(0) long version, @NotNull @Size(max = 50) List<@Valid Item> items,
+    public record Change(@NotNull @Min(0) Long version, @NotNull @Size(max = 50) List<@NotNull @Valid Item> items,
             @Pattern(regexp = "[A-Z0-9-]{1,32}") String coupon) { }
     public record Cart(long version, List<Item> items, String coupon) { }
     @Transactional(readOnly = true, isolation = org.springframework.transaction.annotation.Isolation.REPEATABLE_READ)

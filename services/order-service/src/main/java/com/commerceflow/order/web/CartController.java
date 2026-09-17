@@ -29,8 +29,10 @@ public class CartController {
             @Valid @RequestBody CartService.Change change) { return carts.replace(owner(jwt), key, change); }
     @PostMapping("/cart/quote")
     public JsonNode quote(@AuthenticationPrincipal Jwt jwt, HttpServletRequest request) {
-        return pricing.quote(carts.get(owner(jwt)), jwt.getTokenValue(),
+        var cart = carts.get(owner(jwt));
+        var result = pricing.quote(cart, jwt.getTokenValue(),
                 String.valueOf(request.getAttribute("correlationId")));
+        return ((tools.jackson.databind.node.ObjectNode) result).put("cartVersion", cart.version());
     }
     private static UUID owner(Jwt jwt) { return UUID.fromString(jwt.getSubject()); }
 }

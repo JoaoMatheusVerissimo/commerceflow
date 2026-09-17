@@ -35,7 +35,7 @@ public class PricingService {
     public record Item(@NotNull UUID productId,
             @NotBlank @Pattern(regexp = "[A-Z0-9]+(?:-[A-Z0-9]+)*") @Size(max = 64) String sku,
             @Min(1) @Max(99) int quantity) { }
-    public record Request(@NotNull @Size(min = 1, max = 50) List<@Valid Item> items,
+    public record Request(@NotNull @Size(min = 1, max = 50) List<@NotNull @Valid Item> items,
             @Pattern(regexp = "[A-Z0-9-]{1,32}") String coupon) { }
     public record Line(UUID productId, String sku, String name, String slug, int quantity,
             String unitPrice, String total) { }
@@ -47,7 +47,7 @@ public class PricingService {
             @NotNull @DecimalMin("0") @Digits(integer = 10, fraction = 2) BigDecimal minimum,
             @NotNull Instant startsAt, @NotNull Instant endsAt, boolean active, @Min(0) Long version) { }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, isolation = org.springframework.transaction.annotation.Isolation.REPEATABLE_READ)
     public Quote quote(Request request) {
         var ids = request.items().stream().map(Item::productId).distinct().toList();
         var found = products.findAllById(ids).stream().collect(java.util.stream.Collectors.toMap(
