@@ -27,7 +27,7 @@ class PricingClientTest {
         try {
             var client = new PricingClient("http://127.0.0.1:" + server.getAddress().getPort());
             var cart = new CartService.Cart(1, List.of(new CartService.Item(UUID.randomUUID(), "SKU", 1)), null);
-            assertThat(client.quote(cart, "test-token", "correlation").get("total").asString()).isEqualTo("90.00");
+            assertThat(client.quote(cart, "test-token", "correlation").total()).isEqualTo("90.00");
             assertThat(authorization.get()).isEqualTo("Bearer test-token");
             assertThat(correlation.get()).isEqualTo("correlation");
             responseStatus.set(422);

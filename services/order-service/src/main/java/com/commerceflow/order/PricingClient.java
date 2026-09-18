@@ -5,12 +5,14 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.time.Instant;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
-import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.json.JsonMapper;
 
 @Component
@@ -21,7 +23,11 @@ public class PricingClient {
     public PricingClient(@Value("${commerceflow.catalog-url}") String url) {
         endpoint = URI.create(url + "/internal/pricing/quote");
     }
-    public JsonNode quote(CartService.Cart cart, String token, String correlation) {
+    public record Line(UUID productId, String sku, String name, String slug, int quantity,
+                       String unitPrice, String total) { }
+    public record Quote(List<Line> items, String subtotal, String discount, String total, String currency,
+                        String coupon, Instant quotedAt, Instant expiresAt) { }
+    public Quote quote(CartService.Cart cart, String token, String correlation) {
         if (cart.items().isEmpty()) {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Cart is empty");
         }
@@ -38,7 +44,7 @@ public class PricingClient {
                         "Product, variant or coupon is unavailable or ineligible; review the cart");
             }
             if (response.statusCode() != 200) { throw unavailable(); }
-            return JSON.readTree(response.body());
+            return JSON.readValue(response.body(), Quote.class);
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt(); throw unavailable();
         } catch (java.io.IOException ex) { throw unavailable(); }

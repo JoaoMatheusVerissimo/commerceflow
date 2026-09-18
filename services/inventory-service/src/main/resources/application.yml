@@ -1,16 +1,12 @@
 server:
-  port: ${SERVER_PORT:8084}
+  port: ${SERVER_PORT:8085}
 spring:
   application:
-    name: order-service
+    name: inventory-service
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5436/order_db}
+    url: ${DB_URL:jdbc:postgresql://localhost:5437/inventory_db}
     username: ${DB_USERNAME:commerceflow}
     password: ${DB_PASSWORD:}
-  jpa:
-    hibernate:
-      ddl-auto: validate
-    open-in-view: false
   security:
     oauth2:
       resourceserver:
@@ -18,8 +14,8 @@ spring:
           jwk-set-uri: ${JWK_SET_URI:http://localhost:8081/auth/.well-known/jwks.json}
           issuer-uri: ${JWT_ISSUER:http://localhost:8080/api/v1/auth}
 commerceflow:
-  catalog-url: ${CATALOG_SERVICE_URL:http://localhost:8083}
-  inventory-url: ${INVENTORY_SERVICE_URL:http://localhost:8085}
+  inventory:
+    demo-seed: ${INVENTORY_DEMO_SEED:false}
 management:
   endpoints:
     web:

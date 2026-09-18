@@ -73,6 +73,9 @@ button, input { font: inherit; }
 .cart-summary form { display: grid; gap: 12px; }
 .cart-summary dl { display: grid; grid-template-columns: 1fr auto; gap: 14px; margin: 24px 0; }
 .cart-summary .button { margin-top: 16px; }
+.order-confirmation { max-width: 680px; padding: 36px; background: #eeeee6; border-left: 4px solid #253e30; }
+.status { display: inline-block; padding: 5px 9px; border-radius: 999px; background: #dfe9df; font-size: 12px; }
+.status.danger { color: #8a241f; background: #f7dedb; }
 @media (max-width: 800px) { .cart-layout { grid-template-columns: 1fr; } .store-header nav { flex-wrap: wrap; } }
 .catalog-skeleton { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; }
 .catalog-skeleton span { height: 300px; background: #eeeee5; border-radius: 4px; }

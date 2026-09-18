@@ -15,10 +15,16 @@ spring:
       server:
         webflux:
           routes:
+            - id: inventory-service
+              uri: ${INVENTORY_SERVICE_URL:http://localhost:8085}
+              predicates:
+                - Path=/api/v1/availability/**,/api/v1/admin/inventory,/api/v1/admin/inventory/**
+              filters:
+                - StripPrefix=2
             - id: order-service
               uri: ${ORDER_SERVICE_URL:http://localhost:8084}
               predicates:
-                - Path=/api/v1/cart,/api/v1/cart/**
+                - Path=/api/v1/cart,/api/v1/cart/**,/api/v1/checkout,/api/v1/orders,/api/v1/orders/**,/api/v1/admin/orders,/api/v1/admin/orders/**
               filters:
                 - StripPrefix=2
             - id: catalog-service

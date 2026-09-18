@@ -6,6 +6,7 @@ import { StoreLayout } from '../catalog/StoreLayout'
 import { RemoteState } from '../catalog/RemoteState'
 import { useRemote } from '../catalog/useRemote'
 import { command, saveCart, type Cart, type Command, type Quote } from './api'
+import { checkoutCommand, createOrder, orderStatus, type CheckoutCommand, type Order } from '../orders/api'
 
 export function CartPage({ checkout = false }: { checkout?: boolean }) {
   const { accessToken } = useAuth()
@@ -24,6 +25,8 @@ function CartEditor({ initial, token, reload, checkout }: { initial: Cart; token
   const [pending, setPending] = useState<Command>()
   const [error, setError] = useState('')
   const [feedback, setFeedback] = useState('')
+  const [order, setOrder] = useState<Order>()
+  const [checkoutPending, setCheckoutPending] = useState<CheckoutCommand>()
   useEffect(() => {
     if (!cart.items.length) return
     const controller = new AbortController()
@@ -53,9 +56,23 @@ function CartEditor({ initial, token, reload, checkout }: { initial: Cart; token
     const code = String(new FormData(event.currentTarget).get('coupon') ?? '').trim().toUpperCase()
     void save({ ...cart, coupon: code || null })
   }
+  async function submitOrder(retry?: CheckoutCommand) {
+    const request = retry ?? checkoutCommand(cart.version)
+    setBusy(true); setError(''); setCheckoutPending(request)
+    try {
+      const created = await createOrder(token, request)
+      setOrder(created); setCheckoutPending(undefined)
+    } catch (reason) {
+      if (reason instanceof ApiError && reason.status < 500) setCheckoutPending(undefined)
+      setError(reason instanceof Error ? reason.message : 'Falha ao criar pedido.')
+    } finally { setBusy(false) }
+  }
+  if (order) return <div className="order-confirmation"><p className="eyebrow">Pedido {order.id.slice(0, 8)}</p><h2>{orderStatus[order.status] ?? order.status}</h2>
+    <p>{order.status === 'PAYMENT_PENDING' ? 'Estoque reservado com sucesso. Nenhuma cobrança foi realizada.' : 'Não foi possível reservar todos os itens; o pedido foi cancelado sem cobrança.'}</p>
+    <Link className="button primary" to={`/account/orders/${order.id}`}>Acompanhar pedido</Link></div>
   if (!cart.items.length) return <div className="empty-state"><h2>Seu carrinho está vazio</h2><Link to="/products">Explorar a coleção</Link></div>
   const disabled = busy || !!pending
-  return <><p className="notice">Revisão demonstrativa: não cria pedido, não reserva estoque e não realiza cobrança. Frete ainda não calculado.</p>
+  return <><p className="notice">{checkout ? 'Ao confirmar, o pedido será criado e o estoque reservado. Pagamento e cobrança entram apenas na Fase 5.' : 'Preços e disponibilidade são confirmados novamente no checkout.'}</p>
     <div className="cart-layout"><section aria-label="Itens do carrinho">{cart.items.map(item => {
       const line = quote?.items.find(i => i.sku === item.sku)
       return <article className="cart-line" key={item.sku}><div><h2>{line ? <Link to={`/products/${line.slug}`}>{line.name}</Link> : item.sku}</h2><p>SKU {item.sku}</p>{line && <p>{money(line.unitPrice)} por unidade · {money(line.total)}</p>}</div>
@@ -63,7 +80,7 @@ function CartEditor({ initial, token, reload, checkout }: { initial: Cart; token
       </article>
     })}</section><aside className="cart-summary"><h2>Resumo dos produtos</h2>
       {!checkout && <form onSubmit={coupon}><label>Cupom<input name="coupon" defaultValue={cart.coupon ?? ''} maxLength={32} pattern="[A-Za-z0-9-]{1,32}" /></label><button className="button" disabled={disabled}>Aplicar cupom</button>{cart.coupon && <button type="button" disabled={disabled} onClick={() => save({ ...cart, coupon: null })}>Remover cupom {cart.coupon}</button>}</form>}
-      {!quote ? <RemoteState error={quoteError} retry={refreshQuote} /> : <><dl><dt>Subtotal</dt><dd>{money(quote.subtotal)}</dd><dt>Desconto</dt><dd>− {money(quote.discount)}</dd><dt>Total dos produtos</dt><dd><strong>{money(quote.total)}</strong></dd></dl><p className="muted">Cotação indicativa de {new Date(quote.quotedAt).toLocaleTimeString('pt-BR')}. Preços podem mudar; não há garantia de estoque.</p><button disabled={disabled} onClick={refreshQuote}>Atualizar valores</button>{!checkout && !disabled && <Link className="button primary" to="/checkout">Revisar checkout</Link>}</>}
-    </aside></div>{error && <div role="alert">{error} {pending ? <button disabled={busy} onClick={() => save(pending.cart, pending)}>Repetir mesma operação</button> : <button onClick={reload}>Recarregar carrinho</button>}</div>}{feedback && <p role="status">{feedback}</p>}
+      {!quote ? <RemoteState error={quoteError} retry={refreshQuote} /> : <><dl><dt>Subtotal</dt><dd>{money(quote.subtotal)}</dd><dt>Desconto</dt><dd>− {money(quote.discount)}</dd><dt>Total dos produtos</dt><dd><strong>{money(quote.total)}</strong></dd></dl><p className="muted">Cotação indicativa de {new Date(quote.quotedAt).toLocaleTimeString('pt-BR')}. Preços e estoque serão confirmados no pedido.</p><button disabled={disabled} onClick={refreshQuote}>Atualizar valores</button>{!checkout && !disabled && <Link className="button primary" to="/checkout">Revisar checkout</Link>}{checkout && <button className="button primary" disabled={busy || !!checkoutPending} onClick={() => void submitOrder()}>{busy ? 'Confirmando…' : 'Confirmar pedido e reservar estoque'}</button>}</>}
+    </aside></div>{error && <div role="alert">{error} {checkoutPending ? <button disabled={busy} onClick={() => void submitOrder(checkoutPending)}>Repetir confirmação</button> : pending ? <button disabled={busy} onClick={() => save(pending.cart, pending)}>Repetir mesma operação</button> : <button onClick={reload}>Recarregar carrinho</button>}</div>}{feedback && <p role="status">{feedback}</p>}
     {checkout && <p><Link to="/cart">Voltar e editar carrinho ou cupom</Link></p>}</>
 }

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
-import tools.jackson.databind.JsonNode;
+import java.util.Map;
 
 @RestController
 @SecurityRequirement(name = "bearerAuth")
@@ -28,11 +28,14 @@ public class CartController {
     public CartService.Cart replace(@AuthenticationPrincipal Jwt jwt, @RequestHeader("Idempotency-Key") UUID key,
             @Valid @RequestBody CartService.Change change) { return carts.replace(owner(jwt), key, change); }
     @PostMapping("/cart/quote")
-    public JsonNode quote(@AuthenticationPrincipal Jwt jwt, HttpServletRequest request) {
+    public Map<String, Object> quote(@AuthenticationPrincipal Jwt jwt, HttpServletRequest request) {
         var cart = carts.get(owner(jwt));
         var result = pricing.quote(cart, jwt.getTokenValue(),
                 String.valueOf(request.getAttribute("correlationId")));
-        return ((tools.jackson.databind.node.ObjectNode) result).put("cartVersion", cart.version());
+        return Map.of("cartVersion", cart.version(), "items", result.items(), "subtotal", result.subtotal(),
+                "discount", result.discount(), "total", result.total(), "currency", result.currency(),
+                "coupon", result.coupon() == null ? "" : result.coupon(), "quotedAt", result.quotedAt(),
+                "expiresAt", result.expiresAt());
     }
     private static UUID owner(Jwt jwt) { return UUID.fromString(jwt.getSubject()); }
 }

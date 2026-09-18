@@ -84,11 +84,18 @@ describe('Cart and checkout', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent('outra aba')
     expect(screen.queryByText(/90,00/)).not.toBeInTheDocument()
   })
-  it('reviews checkout without a fake order or payment action', async () => {
-    vi.stubGlobal('fetch', vi.fn(async (url: string) => response(url.endsWith('/quote') ? quote : initial)))
+  it('creates an order with server totals and stock reservation without a payment action', async () => {
+    const fetchMock = vi.fn(async (url: string, init?: RequestInit) => response(url.endsWith('/checkout') && init?.method === 'POST' ? {
+      id: '12345678-order', status: 'PAYMENT_PENDING', total: '90.00', items: quote.items,
+    } : url.endsWith('/quote') ? quote : initial))
+    vi.stubGlobal('fetch', fetchMock)
     render(wrap(<CartPage checkout />))
     expect(await screen.findByText(/90,00/)).toBeInTheDocument()
-    expect(screen.getByText(/não cria pedido/)).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Confirmar pedido e reservar estoque' }))
+    expect(await screen.findByText(/Estoque reservado com sucesso/)).toBeInTheDocument()
+    const request = fetchMock.mock.calls.find(([url]) => String(url).endsWith('/checkout'))!
+    expect(request[1]?.headers).toMatchObject({ 'Idempotency-Key': expect.any(String) })
+    expect(JSON.parse(String(request[1]?.body))).toEqual({ cartVersion: 1 })
     expect(screen.queryByRole('button', { name: /pagar|finalizar/i })).not.toBeInTheDocument()
   })
 })

@@ -31,12 +31,12 @@ public class ApiExceptionHandler {
     }
     @ExceptionHandler({DataIntegrityViolationException.class, OptimisticLockingFailureException.class})
     ResponseEntity<ApiErrors.Body> conflict(Exception ex, HttpServletRequest request) {
-        return response(409, "CART_CONFLICT", "Concurrent cart change; retry the same command or reload", request);
+        return response(409, "RESOURCE_CONFLICT", "Concurrent change; retry the same command or reload", request);
     }
     @ExceptionHandler(org.springframework.web.server.ResponseStatusException.class)
     ResponseEntity<ApiErrors.Body> status(org.springframework.web.server.ResponseStatusException ex,
                                           HttpServletRequest request) {
-        return response(ex.getStatusCode().value(), "CART_REQUEST_FAILED", ex.getReason(), request);
+        return response(ex.getStatusCode().value(), "ORDER_REQUEST_FAILED", ex.getReason(), request);
     }
     @ExceptionHandler(org.springframework.web.bind.MissingRequestHeaderException.class)
     ResponseEntity<ApiErrors.Body> missing(Exception ex, HttpServletRequest request) {

@@ -8,6 +8,7 @@ COPY services/auth-service/pom.xml services/auth-service/pom.xml
 COPY services/customer-service/pom.xml services/customer-service/pom.xml
 COPY services/catalog-service/pom.xml services/catalog-service/pom.xml
 COPY services/order-service/pom.xml services/order-service/pom.xml
+COPY services/inventory-service/pom.xml services/inventory-service/pom.xml
 RUN sh ./mvnw -B -ntp -pl services/auth-service -am dependency:go-offline
 COPY services/auth-service/src services/auth-service/src
 RUN sh ./mvnw -B -ntp -pl services/auth-service -am package -DskipTests

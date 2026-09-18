@@ -9,6 +9,9 @@ import { AdminCatalog } from './catalog/AdminCatalog'
 import { CartPage } from './cart/CartPage'
 import { FavoritesPage } from './cart/FavoritesPage'
 import { CouponsPage } from './cart/CouponsPage'
+import { OrdersPage } from './orders/OrdersPage'
+import { OrderDetailPage } from './orders/OrderDetailPage'
+import { InventoryPage } from './orders/InventoryPage'
 
 export function App() {
   return <Routes>
@@ -16,6 +19,10 @@ export function App() {
     <Route path="/cart" element={<ProtectedRoute><CartPage key="cart" /></ProtectedRoute>} />
     <Route path="/checkout" element={<ProtectedRoute><CartPage key="checkout" checkout /></ProtectedRoute>} />
     <Route path="/favorites" element={<ProtectedRoute><FavoritesPage /></ProtectedRoute>} />
+    <Route path="/account/orders" element={<ProtectedRoute><OrdersPage /></ProtectedRoute>} />
+    <Route path="/account/orders/:id" element={<ProtectedRoute><OrderDetailPage /></ProtectedRoute>} />
+    <Route path="/admin/orders" element={<ProtectedRoute><OrdersPage admin /></ProtectedRoute>} />
+    <Route path="/admin/inventory" element={<ProtectedRoute><InventoryPage /></ProtectedRoute>} />
     <Route path="/" element={<CatalogPage home />} />
     <Route path="/products" element={<CatalogPage />} />
     <Route path="/products/:slug" element={<ProductPage />} />

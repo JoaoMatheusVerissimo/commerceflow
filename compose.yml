@@ -54,6 +54,7 @@ services:
       CUSTOMER_SERVICE_URL: http://customer-service:8082
       CATALOG_SERVICE_URL: http://catalog-service:8083
       ORDER_SERVICE_URL: http://order-service:8084
+      INVENTORY_SERVICE_URL: http://inventory-service:8085
       JWK_SET_URI: http://auth-service:8081/auth/.well-known/jwks.json
       JWT_ISSUER: http://localhost:8080/api/v1/auth
     depends_on:
@@ -106,12 +107,38 @@ services:
       DB_URL: jdbc:postgresql://order-db:5432/order_db
       DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
       CATALOG_SERVICE_URL: http://catalog-service:8083
+      INVENTORY_SERVICE_URL: http://inventory-service:8085
       JWK_SET_URI: http://auth-service:8081/auth/.well-known/jwks.json
       JWT_ISSUER: http://localhost:8080/api/v1/auth
     depends_on:
       order-db: { condition: service_healthy }
       catalog-service: { condition: service_started }
+      inventory-service: { condition: service_started }
+  inventory-db:
+    image: postgres:17.6-alpine
+    environment:
+      POSTGRES_DB: inventory_db
+      POSTGRES_USER: commerceflow
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
+    ports: ["127.0.0.1:5437:5432"]
+    volumes: ["inventory-data:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U commerceflow -d inventory_db"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+  inventory-service:
+    build: { context: ., dockerfile: services/inventory-service/Dockerfile }
+    environment:
+      DB_URL: jdbc:postgresql://inventory-db:5432/inventory_db
+      DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
+      JWK_SET_URI: http://auth-service:8081/auth/.well-known/jwks.json
+      JWT_ISSUER: http://localhost:8080/api/v1/auth
+      INVENTORY_DEMO_SEED: "true"
+    depends_on:
+      inventory-db: { condition: service_healthy }
 volumes:
+  inventory-data:
   order-data:
   auth-data:
   customer-data:
