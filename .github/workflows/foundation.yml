@@ -1,4 +1,4 @@
-name: Foundation
+name: CommerceFlow CI
 on:
   push:
     branches: [master, 'codex/**']
@@ -6,7 +6,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: foundation-${{ github.ref }}
+  group: commerceflow-ci-${{ github.ref }}
   cancel-in-progress: true
 jobs:
   java:
@@ -40,7 +40,13 @@ jobs:
       - run: npm run lint
       - run: npm test
       - run: npm run build
-      - run: npm audit --audit-level=high
+      - name: Audit high severity dependencies with bounded network retry
+        run: |
+          for attempt in 1 2 3; do
+            npm audit --audit-level=high && exit 0
+            [ "$attempt" -eq 3 ] && exit 1
+            sleep $((attempt * 5))
+          done
   compose:
     needs: [java, frontend]
     runs-on: ubuntu-latest
