@@ -1,6 +1,6 @@
 # Catálogo inicial de APIs
 
-> Este catálogo descreve a arquitetura planejada. Os contratos implementados estão em [Foundation](../foundation.md#apis-reais), [Catalog — Fase 2](../catalog.md#apis-implementadas) e no OpenAPI gerado. Os demais pertencem às fases futuras.
+> Este catálogo descreve a arquitetura planejada. Os contratos implementados estão em [Foundation](../foundation.md#apis-reais), [Catalog — Fase 2](../catalog.md#apis-implementadas), [Cart — Fase 3](../cart.md#apis-reais) e no OpenAPI gerado. Os demais pertencem às fases futuras.
 
 ## Convenções HTTP
 
@@ -45,7 +45,7 @@ Nas tabelas abaixo, `SELLER+` inclui SELLER, MANAGER e ADMIN; `MANAGER+` inclui 
 
 ## Catalog Service
 
-Na Fase 2, produtos/categorias usam PUT para atualização completa com versão, não PATCH; moderação usa PATCH em `/admin/reviews/{id}`. Consulte a [tabela de APIs implementadas](../catalog.md#apis-implementadas) para os métodos exatos. Visualizações, cotação e cupons abaixo continuam planejados.
+Na Fase 2, produtos/categorias usam PUT para atualização completa com versão, não PATCH; moderação usa PATCH em `/admin/reviews/{id}`. Na Fase 3, cotação e gestão básica de cupons foram implementadas conforme a [tabela atual](../cart.md#apis-reais). Visualizações e regras avançadas de promoção/resgate continuam planejadas.
 
 | Método e rota | Acesso | Finalidade |
 |---|---|---|
@@ -84,6 +84,8 @@ Reserva e liberação do checkout ocorrem por comandos Kafka, não por endpoint 
 | `POST /orders/{orderId}/cancel` | dono conforme estado ou staff | solicitar cancelamento |
 | `GET /admin/orders` | SELLER+ | consulta operacional |
 | `PATCH /admin/orders/{orderId}/fulfillment` | SELLER+ | transições de processamento/entrega permitidas |
+
+Na implementação da Fase 3, o carrinho autenticado é substituído por `PUT /cart` completo (itens e cupom), com versão e `Idempotency-Key`; `POST /cart/quote` recalcula valores sem criar pedido. As rotas granulares e `POST /checkout` permanecem futuras.
 
 ## Payment Service
 

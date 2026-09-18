@@ -19,9 +19,9 @@ O documento `docs/PROJECT-BRIEF.md` é a fonte de verdade do produto e da arquit
 
 ## Fase atual
 
-Fase 2 — Catalog, autorizada explicitamente pelo usuário após a Foundation.
+Fase 3 — Cart, autorizada explicitamente pelo usuário após o Catalog.
 
-Status: Fase 2 implementada e validada pelos jobs Java, frontend e Compose na execução `34667831031` (commit `528de2a`), incluindo os smokes Foundation e Catalog. Fase 1 preservada, com aceite original na execução Foundation #2 (commit `48e5237`). Não avançar à Fase 3 sem nova aprovação explícita.
+Status: Fase 3 implementada e validada localmente em 2026-09-17: 44 testes Java, 22 testes frontend, lint/build, auditoria npm e smokes Foundation/Catalog/Cart aprovados, incluindo PostgreSQL real e Compose. O aceite remoto aguarda commit/push e CI verde. Fases 1 e 2 preservadas. Não avançar à Fase 4 sem nova aprovação explícita.
 
 Entregáveis arquiteturais da Fase 0 preservados:
 
@@ -40,4 +40,4 @@ Entregáveis arquiteturais da Fase 0 preservados:
 13. ADRs iniciais
 14. Roadmap técnico
 
-Consulte `docs/catalog.md` para execução, APIs e evidências atuais, ADR-011 para decisões do catálogo e `docs/foundation.md`/ADR-010 para a base e integração HTTP temporária.
+Consulte `docs/cart.md` para execução, APIs e evidências atuais, ADR-012 para carrinho/cotação, `docs/catalog.md`/ADR-011 para catálogo e `docs/foundation.md`/ADR-010 para a base.

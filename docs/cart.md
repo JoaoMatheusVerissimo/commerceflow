@@ -81,9 +81,17 @@ npm run build
 npm audit --audit-level=high
 ```
 
-O workflow Foundation executa todos os módulos Java e os três smokes no Compose. A execução remota das alterações finais exige commit/push pelo usuário; não é substituída por uma alegação de CI já verde.
+O workflow **CommerceFlow CI** executa todos os módulos Java e os três smokes no Compose. A auditoria npm mantém falha obrigatória para vulnerabilidades altas e ganhou até três tentativas para indisponibilidade transitória do registry. A execução remota das alterações finais exige commit/push pelo usuário; não é substituída por uma alegação de CI já verde.
 
-Resultados finais serão registrados após a execução local completa. Não declarar aceite antes dessa verificação.
+Resultados locais em 2026-09-17:
+
+- Java: 44 testes, zero falhas, zero erros e zero pulos; Checkstyle e build aprovados. Inclui H2 e PostgreSQL/Testcontainers para migrations, catálogo, favoritos e carrinho, além de duas atualizações concorrentes do mesmo carrinho (um sucesso e um 409).
+- Frontend: 22 testes em 5 arquivos; ESLint e build Vite/TypeScript aprovados. Cobertura crítica de item/SKU, versão, idempotência em falha incerta, conflito, cupom inválido, cotação de outra versão, checkout sem ação fictícia, favoritos e permissão de cupons.
+- Dependências: `npm audit --audit-level=high` concluiu com 0 vulnerabilidades na consulta realizada.
+- Docker Compose local: imagens construídas e serviços Auth, Customer, Catalog, Order, Gateway, frontend e quatro PostgreSQL iniciados. Smokes Foundation, Catalog e Cart aprovados.
+- Inspeção visual desktop no navegador local: home e produto carregaram com navegação, conteúdo e estados coerentes, sem quebra visível. CSS contém breakpoints de 800/420 px; uma matriz visual completa de aparelhos, leitores de tela e navegadores permanece pendente.
+
+**Implementação da Fase 3 concluída e validada localmente.** O aceite remoto permanece pendente da primeira execução verde da CI com o commit final. A Fase 4 não foi iniciada.
 
 ## Débitos delimitados
 

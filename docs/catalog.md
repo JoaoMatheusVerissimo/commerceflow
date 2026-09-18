@@ -2,9 +2,9 @@
 
 ## Resultado e escopo
 
-**Implementada e validada na CI**, com fechamento documental em 2026-09-13. Um visitante pode navegar, buscar, filtrar e abrir produtos do seed. Clientes autenticados podem enviar avaliações; MANAGER/ADMIN podem manter produtos/categorias e moderar avaliações.
+**Implementada e validada na CI**, com fechamento documental em 2026-09-13. Um visitante pode navegar, buscar, filtrar e abrir produtos do seed. Clientes autenticados podem enviar avaliações; MANAGER/ADMIN podem manter produtos/categorias e moderar avaliações. A stack atual inclui também a [Fase 3 — Cart](cart.md).
 
-Inclui `catalog-service`, PostgreSQL próprio, Flyway, OpenAPI, roteamento no gateway e frontend integrado à identidade da Fase 1. Não inclui carrinho, favoritos, checkout, cupons, saldo/reserva de estoque ou eventos Kafka. A Fase 3 não foi iniciada.
+Este registro preserva o escopo entregue na Fase 2: `catalog-service`, PostgreSQL próprio, Flyway, OpenAPI, gateway e frontend. Carrinho, favoritos, cupons e revisão inicial foram adicionados posteriormente na Fase 3; saldo/reserva de estoque, pedidos e Kafka continuam ausentes.
 
 ## Executar
 

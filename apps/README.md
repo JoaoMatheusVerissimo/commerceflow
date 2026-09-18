@@ -2,4 +2,4 @@
 
 Aplicações voltadas à experiência do usuário ficam neste diretório.
 
-`frontend` contém a aplicação React + TypeScript: cadastro/login/conta da Fase 1 e loja navegável, filtros, variantes, avaliações e gestão mínima do catálogo da Fase 2. Concretiza o frontend previsto no monorepo; não há segunda aplicação `web`. Consulte os guias [Foundation](../docs/foundation.md) e [Catalog](../docs/catalog.md). Carrinho, painel operacional completo, CRM e analytics pertencem a fases futuras.
+`frontend` contém a aplicação React + TypeScript: identidade/conta, loja navegável e gestão mínima, além de carrinho, favoritos, cupons e revisão inicial do checkout da Fase 3. Concretiza o frontend previsto no monorepo; não há segunda aplicação `web`. Consulte [Foundation](../docs/foundation.md), [Catalog](../docs/catalog.md) e [Cart](../docs/cart.md). Pedidos, painel operacional completo, CRM e analytics pertencem a fases futuras.

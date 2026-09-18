@@ -38,7 +38,7 @@ Uma fase só termina quando a funcionalidade executa localmente, possui validaç
 
 ## Fase 3 — Cart
 
-**Status:** não iniciada; depende de nova autorização explícita.
+**Status:** implementada e validada localmente após autorização explícita. Testes Java/frontend, lint/build, auditoria npm e smokes Foundation/Catalog/Cart passaram em 2026-09-17. Aceite remoto pendente da CI após commit/push. Consulte [execução, APIs e limites](cart.md) e [ADR-012](decisions/ADR-012-cart-and-pricing.md).
 
 **Fatia demonstrável:** adicionar/remover itens, favoritar, aplicar cupom e revisar checkout.
 
@@ -48,6 +48,8 @@ Uma fase só termina quando a funcionalidade executa localmente, possui validaç
 - persistência, idempotência de comandos e experiência responsiva.
 
 ## Fase 4 — Orders
+
+**Status:** não iniciada; depende de nova autorização explícita.
 
 **Fatia demonstrável:** criar pedido, reservar estoque com segurança concorrente e acompanhar status inicial.
 
