@@ -17,6 +17,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -66,11 +68,12 @@ class OrderIntegrationTest {
         mvc.perform(customer(get("/orders/" + id), owner)).andExpect(status().isOk())
                 .andExpect(jsonPath("$.items[0].name").value("Bota"));
         mvc.perform(customer(get("/orders/" + id), UUID.randomUUID())).andExpect(status().isNotFound());
+        mvc.perform(staff(get("/orders/" + id), UUID.randomUUID())).andExpect(status().isOk());
         org.assertj.core.api.Assertions.assertThat(carts.get(owner).items()).isEmpty();
     }
     @Test void recordsCancellationWhenStockIsInsufficient() throws Exception {
-        when(inventory.reserve(any(), anyString(), anyString()))
-                .thenThrow(new InventoryClient.InventoryRejectedException());
+        doThrow(new InventoryClient.InventoryRejectedException()).when(inventory)
+                .reserve(any(), anyString(), anyString());
         mvc.perform(customer(post("/checkout"), owner).header("Idempotency-Key", UUID.randomUUID())
                 .contentType("application/json").content("{\"cartVersion\":1}"))
                 .andExpect(status().isAccepted()).andExpect(jsonPath("$.status").value("CANCELLED"))
@@ -79,16 +82,16 @@ class OrderIntegrationTest {
     }
     @Test void preservesCreatedOrderForSameKeyRetryAfterTransientFailure() throws Exception {
         var key = UUID.randomUUID();
-        when(inventory.reserve(any(), anyString(), anyString()))
-                .thenThrow(new InventoryClient.InventoryUnavailableException());
+        doThrow(new InventoryClient.InventoryUnavailableException()).when(inventory)
+                .reserve(any(), anyString(), anyString());
         mvc.perform(customer(post("/checkout"), owner).header("Idempotency-Key", key)
                 .contentType("application/json").content("{\"cartVersion\":1}"))
                 .andExpect(status().isServiceUnavailable());
-        when(inventory.reserve(any(), anyString(), anyString())).thenAnswer(invocation -> {
+        doAnswer(invocation -> {
             var request = invocation.getArgument(0, InventoryClient.Request.class);
             return new InventoryClient.Reservation(request.orderId(), request.orderId(), "ACTIVE",
                     OffsetDateTime.now().plusMinutes(30), request.items());
-        });
+        }).when(inventory).reserve(any(), anyString(), anyString());
         mvc.perform(customer(post("/checkout"), owner).header("Idempotency-Key", key)
                 .contentType("application/json").content("{\"cartVersion\":1}"))
                 .andExpect(status().isAccepted()).andExpect(jsonPath("$.status").value("PAYMENT_PENDING"));
@@ -106,5 +109,10 @@ class OrderIntegrationTest {
             org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder request, UUID user) {
         return request.with(jwt().jwt(j -> j.subject(user.toString()).claim("roles", List.of("CUSTOMER")))
                 .authorities(new SimpleGrantedAuthority("ROLE_CUSTOMER")));
+    }
+    private static org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder staff(
+            org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder request, UUID user) {
+        return request.with(jwt().jwt(j -> j.subject(user.toString()).claim("roles", List.of("SELLER")))
+                .authorities(new SimpleGrantedAuthority("ROLE_SELLER")));
     }
 }

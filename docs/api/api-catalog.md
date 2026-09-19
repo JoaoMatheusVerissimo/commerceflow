@@ -1,6 +1,6 @@
 # Catálogo inicial de APIs
 
-> Este catálogo descreve a arquitetura planejada. Os contratos implementados estão em [Foundation](../foundation.md#apis-reais), [Catalog — Fase 2](../catalog.md#apis-implementadas), [Cart — Fase 3](../cart.md#apis-reais) e no OpenAPI gerado. Os demais pertencem às fases futuras.
+> Este catálogo descreve a arquitetura planejada. Os contratos implementados estão em [Foundation](../foundation.md#apis-reais), [Catalog — Fase 2](../catalog.md#apis-implementadas), [Cart — Fase 3](../cart.md#apis-reais), [Orders — Fase 4](../orders.md#apis-reais) e no OpenAPI gerado. Os demais pertencem às fases futuras.
 
 ## Convenções HTTP
 
@@ -64,12 +64,12 @@ Na Fase 2, produtos/categorias usam PUT para atualização completa com versão,
 
 | Método e rota | Acesso | Finalidade |
 |---|---|---|
-| `GET /products/{productId}/availability` | público | disponibilidade agregada sem expor saldo sensível |
+| `GET /availability/{sku}` | público | disponibilidade da variação demonstrativa |
 | `GET /admin/inventory` | SELLER+ | consultar saldos e alertas |
 | `POST /admin/inventory/{sku}/movements` | MANAGER+ | entrada/saída/ajuste auditável |
 | `PATCH /admin/inventory/{sku}/minimum` | MANAGER+ | definir estoque mínimo |
 
-Reserva e liberação do checkout ocorrem por comandos Kafka, não por endpoint público.
+Na Fase 4, Order chama `POST /internal/reservations` por HTTP interno autenticado e idempotente. A rota não é publicada pelo Gateway. A migração para comandos Kafka, liberação e compensação pertencem às Fases 5–6.
 
 ## Order Service
 
@@ -81,11 +81,9 @@ Reserva e liberação do checkout ocorrem por comandos Kafka, não por endpoint 
 | `POST /checkout` | CUSTOMER | criar pedido idempotente e iniciar Saga; retorna `202` |
 | `GET /orders` | CUSTOMER | histórico próprio |
 | `GET /orders/{orderId}` | dono ou staff | detalhe e estado da Saga/pedido |
-| `POST /orders/{orderId}/cancel` | dono conforme estado ou staff | solicitar cancelamento |
 | `GET /admin/orders` | SELLER+ | consulta operacional |
-| `PATCH /admin/orders/{orderId}/fulfillment` | SELLER+ | transições de processamento/entrega permitidas |
 
-Na implementação da Fase 3, o carrinho autenticado é substituído por `PUT /cart` completo (itens e cupom), com versão e `Idempotency-Key`; `POST /cart/quote` recalcula valores sem criar pedido. As rotas granulares e `POST /checkout` permanecem futuras.
+O carrinho autenticado é substituído por `PUT /cart` completo (itens e cupom), com versão e `Idempotency-Key`; `POST /cart/quote` apenas recalcula. Na Fase 4, `POST /checkout` cria snapshot, reserva Inventory e produz somente `CREATED`, `PAYMENT_PENDING` ou `CANCELLED`. Cancelamento solicitado e fulfillment permanecem futuros.
 
 ## Payment Service
 

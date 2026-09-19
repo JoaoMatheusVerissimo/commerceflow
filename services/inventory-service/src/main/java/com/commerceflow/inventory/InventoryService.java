@@ -104,10 +104,10 @@ public class InventoryService {
     @Transactional
     public Stock move(String sku, Movement input, UUID actor) {
         var now = OffsetDateTime.ofInstant(clock.instant(), ZoneOffset.UTC);
-        if ("IN".equals(input.kind())) {
+        if ("IN".equals(input.kind())
+                && jdbc.queryForObject("SELECT COUNT(*) FROM stock_items WHERE sku=?", Long.class, sku) == 0) {
             jdbc.update("INSERT INTO stock_items(sku,physical,reserved,minimum,version,updated_at) "
-                    + "VALUES (?,?,0,0,0,?) "
-                    + "ON CONFLICT (sku) DO NOTHING", sku, 0, now);
+                    + "VALUES (?,?,0,0,0,?)", sku, 0, now);
         }
         var before = lock(sku);
         int target = "ADJUSTMENT".equals(input.kind()) ? input.quantity()
@@ -131,11 +131,12 @@ public class InventoryService {
         return get(sku);
     }
     private Reservation view(UUID orderId) {
-        var row = jdbc.queryForMap("SELECT status,expires_at FROM reservations WHERE order_id=?", orderId);
+        var row = jdbc.query("SELECT status,expires_at FROM reservations WHERE order_id=?",
+                (r, n) -> new Object[]{r.getString(1), r.getObject(2, OffsetDateTime.class)}, orderId)
+                .getFirst();
         var items = jdbc.query("SELECT sku,quantity FROM reservation_items WHERE order_id=? ORDER BY sku",
                 (r, n) -> new ReservationItem(r.getString(1), r.getInt(2)), orderId);
-        return new Reservation(orderId, orderId, String.valueOf(row.get("status")),
-                (OffsetDateTime) row.get("expires_at"), items);
+        return new Reservation(orderId, orderId, String.valueOf(row[0]), (OffsetDateTime) row[1], items);
     }
     private Stock lock(String sku) {
         return jdbc.query("SELECT sku,physical,reserved,minimum,version FROM stock_items WHERE sku=? FOR UPDATE",

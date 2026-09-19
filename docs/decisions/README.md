@@ -16,6 +16,7 @@ ADRs registram decisões com impacto duradouro. Um ADR aceito não é reescrito 
 | [ADR-010](ADR-010-foundation-integration.md) | Aceito | Integração mínima e limitações da Foundation |
 | [ADR-011](ADR-011-catalog-foundation.md) | Aceito | Catálogo navegável, gestão mínima e avaliações moderadas |
 | [ADR-012](ADR-012-cart-and-pricing.md) | Aceito | Carrinho persistente, cotação autoritativa, cupons e favoritos |
+| [ADR-013](ADR-013-orders-and-inventory.md) | Aceito | Pedido com snapshot e reserva concorrente de estoque |
 
 ## Estados
 

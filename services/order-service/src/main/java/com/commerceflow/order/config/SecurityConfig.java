@@ -40,7 +40,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/actuator/health/**", "/v3/api-docs/**", "/swagger-ui/**").permitAll()
                         .requestMatchers("/cart", "/cart/**").hasRole("CUSTOMER")
-                        .requestMatchers("/checkout", "/orders", "/orders/**").hasRole("CUSTOMER")
+                        .requestMatchers("/checkout").hasRole("CUSTOMER")
+                        .requestMatchers("/orders", "/orders/**")
+                        .hasAnyRole("CUSTOMER", "SELLER", "MANAGER", "ADMIN")
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/admin/orders/**")
                         .hasAnyRole("SELLER", "MANAGER", "ADMIN")
                         .anyRequest().denyAll())

@@ -58,7 +58,7 @@ flowchart LR
     Gateway --> Notification
     Gateway --> Analytics
     Order -->|consulta preço/cupom| Catalog
-    Order -->|Saga via Kafka| Inventory
+    Order -->|reserva HTTP na Fase 4; Saga via Kafka na Fase 6| Inventory
     Order -->|Saga via Kafka| Payment
     Analytics -->|resultados via Kafka| Customer
     Customer -->|projeções via Kafka| CRM

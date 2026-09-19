@@ -38,7 +38,7 @@ Uma fase só termina quando a funcionalidade executa localmente, possui validaç
 
 ## Fase 3 — Cart
 
-**Status:** implementada e validada localmente após autorização explícita. Testes Java/frontend, lint/build, auditoria npm e smokes Foundation/Catalog/Cart passaram em 2026-09-17. Aceite remoto pendente da CI após commit/push. Consulte [execução, APIs e limites](cart.md) e [ADR-012](decisions/ADR-012-cart-and-pricing.md).
+**Status:** concluída. A [CI do commit e3c8d22](https://github.com/JoaoMatheusVerissimo/commerceflow/actions/runs/35297557804) aprovou Java, frontend e Compose, incluindo as regressões Foundation/Catalog/Cart. Consulte [execução, APIs e limites](cart.md) e [ADR-012](decisions/ADR-012-cart-and-pricing.md).
 
 **Fatia demonstrável:** adicionar/remover itens, favoritar, aplicar cupom e revisar checkout.
 
@@ -49,7 +49,7 @@ Uma fase só termina quando a funcionalidade executa localmente, possui validaç
 
 ## Fase 4 — Orders
 
-**Status:** não iniciada; depende de nova autorização explícita.
+**Status:** implementada e validada localmente após autorização explícita. Maven/Checkstyle, 60 testes Java, ESLint/build, 25 testes frontend, auditoria npm, Compose e smokes Foundation/Catalog/Cart/Orders passaram em 2026-09-19. Aceite remoto depende do próximo commit/push e CI verde. Consulte [execução, APIs e limites](orders.md) e [ADR-013](decisions/ADR-013-orders-and-inventory.md).
 
 **Fatia demonstrável:** criar pedido, reservar estoque com segurança concorrente e acompanhar status inicial.
 

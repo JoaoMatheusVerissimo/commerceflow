@@ -14,7 +14,7 @@
 | `notification_db` | Notification | notificações, preferências e tentativas de entrega |
 | `analytics_db` | Analytics | features, resultados RFM/churn, recomendações e agregados |
 
-Na execução local, uma instância PostgreSQL hospeda databases isolados e usuários com privilégios mínimos. Um serviço não recebe credenciais para outro database.
+Na execução local atual, o Compose usa containers PostgreSQL isolados para Auth, Customer, Catalog, Order e Inventory, cada serviço com credenciais apenas do próprio banco. Os bancos dos serviços futuros continuam conceituais até suas fases.
 
 ## Padrões comuns
 
@@ -29,8 +29,8 @@ Essas tabelas possuem formato conceitual comum, mas migrations locais. Não há 
 
 ## Consistência e concorrência
 
-- Order usa lock/versionamento otimista para transições e uma chave idempotente por checkout.
-- Inventory executa a condição `available >= requested` e a reserva de forma atômica. A implementação inicial deverá usar update condicional ou lock pessimista curto e possuir teste concorrente com Testcontainers.
+- Order usa versão do carrinho, comando idempotente por cliente/chave e transição condicional do pedido.
+- Inventory ordena SKUs, usa lock pessimista curto e update condicional para executar `available >= requested` e reservar atomicamente; o teste concorrente com PostgreSQL prova a disputa da última unidade.
 - Payment impõe unicidade em `(order_id, operation_type)` e na idempotency key.
 - Consumers registram o evento processado na mesma transação de seus efeitos locais.
 - Snapshots preservam nome, SKU, preço, desconto e endereço que valeram na compra.

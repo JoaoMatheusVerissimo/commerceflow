@@ -2,7 +2,7 @@
 
 ## Escopo
 
-Carrinho persistente por cliente autenticado, inclusão/alteração/remoção de SKUs, favoritos, cupons percentuais/fixos, cotação autoritativa e revisão inicial de checkout. Sem pedidos, estoque, frete calculado, cobrança ou pagamento. A Fase 4 não foi iniciada.
+Carrinho persistente por cliente autenticado, inclusão/alteração/remoção de SKUs, favoritos, cupons percentuais/fixos, cotação autoritativa e revisão inicial de checkout. O escopo encerrado nesta fase não incluía pedidos, estoque, frete calculado, cobrança ou pagamento; pedidos e reserva foram acrescentados posteriormente na [Fase 4](orders.md).
 
 Base revisada: commit `f8eb4f9`, com Foundation e Catalog preservados. O trabalho inicial desta fase foi registrado pelo usuário em `fc023ae`; os ajustes finais incluem validações, testes, integração e documentação. O problema local de CRLF do `mvnw` estava resolvido (`w/lf`). Não houve reescrita de autenticação ou catálogo funcional.
 
@@ -91,10 +91,10 @@ Resultados locais em 2026-09-17:
 - Docker Compose local: imagens construídas e serviços Auth, Customer, Catalog, Order, Gateway, frontend e quatro PostgreSQL iniciados. Smokes Foundation, Catalog e Cart aprovados.
 - Inspeção visual desktop no navegador local: home e produto carregaram com navegação, conteúdo e estados coerentes, sem quebra visível. CSS contém breakpoints de 800/420 px; uma matriz visual completa de aparelhos, leitores de tela e navegadores permanece pendente.
 
-**Implementação da Fase 3 concluída e validada localmente.** O aceite remoto permanece pendente da primeira execução verde da CI com o commit final. A Fase 4 não foi iniciada.
+**Implementação da Fase 3 concluída.** O aceite remoto foi confirmado na [execução 35297557804](https://github.com/JoaoMatheusVerissimo/commerceflow/actions/runs/35297557804), commit `e3c8d22`. A evolução de pedido/estoque está documentada separadamente em [Fase 4](orders.md).
 
 ## Débitos delimitados
 
-Carrinho anônimo/merge, política de expurgo, batch de favoritos, auditoria administrativa com before/after, auditoria ampla de acessibilidade e limites de produção herdados. Pedido, endereço de entrega, reserva de estoque, pagamento, consumo de cupons e Kafka pertencem às próximas fases, não a funcionalidades simuladas nesta entrega.
+Carrinho anônimo/merge, política de expurgo, batch de favoritos, auditoria ampla de acessibilidade e limites de produção herdados. Pedido e reserva foram adicionados na Fase 4; endereço de entrega, pagamento, consumo definitivo de cupons e Kafka permanecem futuros.
 
 Decisões: [ADR-012](decisions/ADR-012-cart-and-pricing.md).

@@ -2,14 +2,16 @@
 
 CommerceFlow é um projeto de portfólio que evoluirá para uma plataforma de comércio digital orientada a eventos, reunindo e-commerce, CRM, Customer 360 e analytics.
 
-> Status atual: **Fase 3 — Cart implementada e validada localmente; aceite remoto aguarda CI.** Carrinho persistente, favoritos, cupons e revisão inicial do checkout estão disponíveis. Ainda não há pedidos, estoque ou pagamentos.
+> Status atual: **Fase 4 — Orders implementada e validada localmente; aceite remoto aguarda CI.** Pedidos com snapshot, reserva concorrente de estoque, histórico e visão operacional estão disponíveis. Pagamentos ainda não foram iniciados.
 
 ## O que existe agora
 
 - React/TypeScript com loja, busca/filtros, paginação, detalhes e seleção de variantes, cadastro/login e conta;
-- carrinho autenticado, favoritos, cotação autoritativa, cupom e revisão inicial do checkout;
+- carrinho autenticado, favoritos, cotação autoritativa e cupons;
+- checkout idempotente, pedidos com snapshot, histórico/detalhe e reserva de estoque segura;
+- painel inicial de pedidos e estoque com movimentos auditáveis e alerta de mínimo;
 - gestão de produtos/categorias/cupons por MANAGER/ADMIN e moderação de avaliações;
-- gateway e serviços Auth/Customer/Catalog/Order em Java 21, bancos PostgreSQL separados e Flyway;
+- gateway e serviços Auth/Customer/Catalog/Order/Inventory em Java 21, bancos PostgreSQL separados e Flyway;
 - JWT RS256, Argon2, refresh rotativo, CSRF, roles e erros padronizados;
 - seed fictício com seis produtos e imagens locais, Dockerfiles, Compose, testes e CI;
 
@@ -27,6 +29,7 @@ CommerceFlow é um projeto de portfólio que evoluirá para uma plataforma de co
 - [Executar e testar a Foundation](docs/foundation.md)
 - [Executar, administrar e testar o catálogo](docs/catalog.md)
 - [Executar e testar carrinho, favoritos, cupons e checkout inicial](docs/cart.md)
+- [Executar e testar pedidos e estoque](docs/orders.md)
 
 - [Briefing completo](docs/PROJECT-BRIEF.md)
 - [Índice da arquitetura](docs/architecture/README.md)
@@ -37,13 +40,13 @@ CommerceFlow é um projeto de portfólio que evoluirá para uma plataforma de co
 
 ## Executar localmente
 
-Configure uma senha local em `.env` a partir de `.env.example` e execute `docker compose up -d --build`. Abra `http://localhost:3000`. Requer Docker Engine/Desktop com Compose v2 e containers Linux. Consulte [o guia da Fase 3](docs/cart.md) para testes, variáveis, APIs e execução.
+Configure uma senha local em `.env` a partir de `.env.example` e execute `docker compose up -d --build`. Abra `http://localhost:3000`. Requer Docker Engine/Desktop com Compose v2 e containers Linux. Consulte [o guia da Fase 4](docs/orders.md) para testes, variáveis, APIs e execução.
 
 ## Validação e limitações
 
-Na Fase 3, 44 testes Java e 22 frontend passaram, assim como Checkstyle, ESLint, builds, auditoria npm e os smokes Foundation/Catalog/Cart no Compose local. O aceite remoto desta alteração depende da próxima CI após o commit/push do usuário. A última CI publicada antes dela continua sendo a [Fase 2 no commit 528de2a](https://github.com/JoaoMatheusVerissimo/commerceflow/actions/runs/34667831031). Não há deploy público nem configuração pronta para produção. Veja [evidências e limites](docs/cart.md#verificação) e [ADR-012](docs/decisions/ADR-012-cart-and-pricing.md).
+Na Fase 4, 60 testes Java e 25 frontend passaram, assim como Checkstyle, ESLint, builds, auditoria npm e os quatro smokes no Compose local. O aceite remoto desta alteração depende da próxima CI após o commit/push do usuário. A Fase 3 já possui [CI verde no commit e3c8d22](https://github.com/JoaoMatheusVerissimo/commerceflow/actions/runs/35297557804). Não há deploy público nem configuração pronta para produção. Veja [evidências e limites](docs/orders.md#verificação) e [ADR-013](docs/decisions/ADR-013-orders-and-inventory.md).
 
-Os aceites anteriores estão em [Foundation](docs/foundation.md#aceite-da-fase-1) e [Catalog](docs/catalog.md). A Fase 3 está documentada em [Cart](docs/cart.md). A Fase 4 não foi iniciada e exige nova aprovação explícita.
+Os aceites anteriores estão em [Foundation](docs/foundation.md#aceite-da-fase-1), [Catalog](docs/catalog.md) e [Cart](docs/cart.md). A Fase 4 está documentada em [Orders](docs/orders.md). A Fase 5 não foi iniciada e exige nova aprovação explícita.
 
 ## Princípios
 
