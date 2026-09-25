@@ -5,7 +5,7 @@ import { useAuth } from '../auth/AuthContext'
 export function StoreLayout({ children }: PropsWithChildren) {
   const { accessToken } = useAuth()
   return <div className="store">
-    <div className="store-note">Coleção demonstrativa · Produtos ilustrados · Sem vendas nesta etapa</div>
+    <div className="store-note">Coleção demonstrativa · Produtos ilustrados · Pagamentos na próxima etapa</div>
     <header className="store-header"><Link className="store-brand" to="/">CommerceFlow<span>ESSENCIAIS DO CAMPO</span></Link>
       <nav aria-label="Navegação principal"><Link to="/products">Coleção</Link><Link to="/categories/botas">Botas</Link><Link to="/categories/chapeus">Chapéus</Link>
         <Link to="/favorites">Favoritos</Link><Link to="/cart">Carrinho</Link><Link to="/account/orders">Pedidos</Link>

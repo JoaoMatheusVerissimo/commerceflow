@@ -2,7 +2,7 @@
 
 CommerceFlow é um projeto de portfólio que evoluirá para uma plataforma de comércio digital orientada a eventos, reunindo e-commerce, CRM, Customer 360 e analytics.
 
-> Status atual: **Fase 4 — Orders implementada e validada localmente; aceite remoto aguarda CI.** Pedidos com snapshot, reserva concorrente de estoque, histórico e visão operacional estão disponíveis. Pagamentos ainda não foram iniciados.
+> Status atual: **Fase 4 — Orders implementada, validada localmente e aceita pela CI.** Pedidos com snapshot, reserva concorrente de estoque, histórico e visão operacional estão disponíveis. Pagamentos ainda não foram iniciados.
 
 ## O que existe agora
 
@@ -44,7 +44,7 @@ Configure uma senha local em `.env` a partir de `.env.example` e execute `docker
 
 ## Validação e limitações
 
-Na Fase 4, 60 testes Java e 25 frontend passaram, assim como Checkstyle, ESLint, builds, auditoria npm e os quatro smokes no Compose local. O aceite remoto desta alteração depende da próxima CI após o commit/push do usuário. A Fase 3 já possui [CI verde no commit e3c8d22](https://github.com/JoaoMatheusVerissimo/commerceflow/actions/runs/35297557804). Não há deploy público nem configuração pronta para produção. Veja [evidências e limites](docs/orders.md#verificação) e [ADR-013](docs/decisions/ADR-013-orders-and-inventory.md).
+Na Fase 4, 60 testes Java e 25 frontend passaram, assim como Checkstyle, ESLint, builds, auditoria npm e os quatro smokes no Compose local. O aceite remoto foi confirmado na [execução 35474080958](https://github.com/JoaoMatheusVerissimo/commerceflow/actions/runs/35474080958), commit `3be3f64`. A Fase 3 já possui [CI verde no commit e3c8d22](https://github.com/JoaoMatheusVerissimo/commerceflow/actions/runs/35297557804). Não há deploy público nem configuração pronta para produção. Veja [evidências e limites](docs/orders.md#verificação) e [ADR-013](docs/decisions/ADR-013-orders-and-inventory.md).
 
 Os aceites anteriores estão em [Foundation](docs/foundation.md#aceite-da-fase-1), [Catalog](docs/catalog.md) e [Cart](docs/cart.md). A Fase 4 está documentada em [Orders](docs/orders.md). A Fase 5 não foi iniciada e exige nova aprovação explícita.
 

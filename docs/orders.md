@@ -76,7 +76,7 @@ Resultados locais em 2026-09-19:
 - Compose: 12 containers ativos, cinco bancos saudáveis, imagens reconstruídas e smokes Foundation, Catalog, Cart e Orders aprovados.
 - Integração do smoke Orders: snapshot, reserva, replay idempotente, ownership, saldo público e limpeza do carrinho verificados contra os serviços e PostgreSQL reais.
 
-A CI executará a mesma regressão após o próximo commit/push. Até essa execução remota ficar verde, o estado é **implementado e validado localmente, aceite remoto pendente**.
+A mesma regressão foi aprovada remotamente pela **CommerceFlow CI** na [execução 35474080958](https://github.com/JoaoMatheusVerissimo/commerceflow/actions/runs/35474080958), commit `3be3f64`. O estado da fase é **implementado, validado localmente e aceito remotamente**.
 
 ## Débitos delimitados
 

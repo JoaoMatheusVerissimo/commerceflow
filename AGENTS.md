@@ -21,7 +21,7 @@ O documento `docs/PROJECT-BRIEF.md` é a fonte de verdade do produto e da arquit
 
 Fase 4 — Orders, autorizada explicitamente pelo usuário após o Cart.
 
-Status: Fase 4 implementada e validada localmente em 2026-09-19: 60 testes Java, 25 testes frontend, lint/build, auditoria npm e smokes Foundation/Catalog/Cart/Orders aprovados, incluindo concorrência em PostgreSQL real e Compose. O aceite remoto aguarda commit/push e CI verde. Fases 1–3 preservadas; a Fase 3 tem CI verde no commit `e3c8d22`. Não avançar à Fase 5 sem nova aprovação explícita.
+Status: Fase 4 implementada e validada localmente em 2026-09-19: 60 testes Java, 25 testes frontend, lint/build, auditoria npm e smokes Foundation/Catalog/Cart/Orders aprovados, incluindo concorrência em PostgreSQL real e Compose. O aceite remoto foi confirmado na execução `35474080958`, commit `3be3f64`. Fases 1–3 preservadas; a Fase 3 tem CI verde no commit `e3c8d22`. Não avançar à Fase 5 sem nova aprovação explícita.
 
 Entregáveis arquiteturais da Fase 0 preservados:
 
